@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Announcements – Mr Lucky Army</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Announcements-specific styles ── */
+    .announcements-header {
+      position: relative; z-index: 1;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .announcements-header .container {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 1rem; padding-bottom: 1rem;
+    }
+    .header-logo {
+      font-size: 1.4rem; font-weight: 700;
+      text-decoration: none;
+    }
+
+    .announcements-main {
+      position: relative; z-index: 1;
+      max-width: 48rem; margin: 0 auto;
+      padding: 3rem 1rem 6rem;
+    }
+
+    .page-heading {
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .page-heading-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 3.2rem; height: 3.2rem;
+      background: linear-gradient(135deg, var(--red), var(--rose));
+      border-radius: .75rem;
+      flex-shrink: 0;
+    }
+    .page-heading-icon svg { width: 1.5rem; height: 1.5rem; }
+    .page-heading h1 { font-size: 2rem; font-weight: 700; }
+    .page-heading p  { font-size: .9rem; color: var(--gray-4); margin-top: .1rem; }
+
+    .announcement-card {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 1rem;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .announcement-media img,
+    .announcement-media video {
+      width: 100%; display: block;
+      max-height: 28rem; object-fit: cover;
+    }
+    .announcement-media.multi {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+    }
+    .announcement-media.multi img,
+    .announcement-media.multi video {
+      aspect-ratio: 16/9; object-fit: cover;
+    }
+
+    .announcement-body { padding: 1.5rem; }
+    .announcement-body h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: .25rem; }
+    .announcement-meta  { font-size: .8rem; color: var(--gray-4); margin-bottom: 1rem; }
+    .announcement-content { color: #d1d5db; line-height: 1.7; white-space: pre-wrap; font-size: .95rem; }
+  </style>
+</head>
+<body>
+
+  <div class="ambient">
+    <div class="ambient-blob ambient-blob-top"></div>
+    <div class="ambient-blob ambient-blob-bottom"></div>
+  </div>
+
+  <header class="announcements-header">
+    <div class="container">
+      <a href="index.html" class="header-logo gradient-text">Mr Lucky Army</a>
+    </div>
+  </header>
+
+  <main class="announcements-main">
+    <div class="page-heading">
+      <div class="page-heading-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 11l19-9-9 19-2-8-8-2z"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Announcements</h1>
+        <p>Server news and updates</p>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         ANNOUNCEMENTS — add new ones at the top
+         ══════════════════════════════════════════════ -->
+
+    <div class="announcement-card">
+      <!-- Optional media: uncomment and set src to add an image
+      <div class="announcement-media">
+        <img src="your-image.png" alt="" />
+      </div>
+      -->
+      <div class="announcement-body">
+        <h3>Welcome to Mr Lucky Army!</h3>
+        <p class="announcement-meta">Posted by Admin &bull; April 24, 2026</p>
+        <p class="announcement-content">Hey everyone, welcome to the official Mr Lucky Army website!
+
+The server is a survival Minecraft experience focused on a player-driven economy, massive world exploration, and zero pay-to-win mechanics.
+
+Join us at mr-lucky-army.falix.gg:29035 (Java &amp; Bedrock compatible) and say hi in our Discord. More updates coming soon!</p>
+      </div>
+    </div>
+
+    <!-- Copy the block above to add more announcements -->
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-row">
+        <div class="footer-brand">
+          <h3 class="gradient-text footer-logo">Mr Lucky Army</h3>
+          <p class="footer-tagline">A fair, fun, and feature-rich Minecraft experience</p>
+        </div>
+        <div class="footer-meta">
+          <div class="server-status">
+            <span class="status-dot" id="status-dot"></span>
+            <span id="status-text">Checking...</span>
+            <span class="players-text" id="players-text"></span>
+          </div>
+          <div class="footer-ip">mr-lucky-army.falix.gg:29035</div>
+          <a href="https://discord.gg/ppqBAUPrqf" target="_blank" rel="noopener noreferrer" class="footer-discord">Discord</a>
+        </div>
+      </div>
+      <div class="footer-copy">
+        &copy; <span id="year"></span> Mr Lucky Army. Not affiliated with Mojang Studios.
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
