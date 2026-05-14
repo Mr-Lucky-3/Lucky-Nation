@@ -109,11 +109,61 @@ fetch('https://api.mcsrvstat.us/2/mr-lucky-army.falix.gg:29035')
   }).catch(function(){});
 </script>
 <script>
-function submitAppeal(){
-  if(!document.getElementById('mcName').value.trim()||!document.getElementById('punishType').value||!document.getElementById('banReason').value.trim()||!document.getElementById('explanation').value.trim()){alert('Please fill out all required fields.');return;}
-  document.getElementById('appealForm').style.display='none';
-  document.getElementById('appealSuccess').style.display='block';
-  window.scrollTo(0,0);
+function submitAppeal() {
+    const mcName = document.getElementById('mcName').value.trim();
+    const discordName = document.getElementById('discordName').value.trim() || "Not Provided";
+    const punishType = document.getElementById('punishType').value;
+    const banDate = document.getElementById('banDate').value;
+    const banReason = document.getElementById('banReason').value.trim();
+    const explanation = document.getElementById('explanation').value.trim();
+    const whyUnban = document.getElementById('whyUnban').value.trim() || "No response provided.";
+
+    if (!mcName || !punishType || !banDate || !banReason || !explanation) {
+        alert('Please fill out all required fields marked with an asterisk (*).');
+        return;
+    }
+
+    const webhookURL = "https://discord.com/api/webhooks/1504321646151073793/JlFfwKKTbwlBvLhel8vkBQ0pVWvMedywKKzDDdsBvHgrivhNWFL-b0EBfXbPG-0HYnxP";
+
+    const data = {
+        "content": "🚨 **New Ban Appeal Submitted!**",
+        "embeds": [
+            {
+                "title": "Appeal Details",
+                "color": 15548997,
+                "fields": [
+                    { "name": "Minecraft Username", "value": mcName, "inline": true },
+                    { "name": "Discord Handle", "value": discordName, "inline": true },
+                    { "name": "Punishment Type", "value": punishType, "inline": true },
+                    { "name": "Date of Ban", "value": banDate, "inline": true },
+                    { "name": "Stated Reason", "value": banReason, "inline": false },
+                    { "name": "Player's Explanation", "value": explanation, "inline": false },
+                    { "name": "Why unban?", "value": whyUnban, "inline": false }
+                ],
+                "footer": { "text": "Lucky Nation Appeal System" },
+                "timestamp": new Date().toISOString()
+            }
+        ]
+    };
+
+    fetch(webhookURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (response.ok) {
+            document.getElementById('appealForm').style.display = 'none';
+            document.getElementById('appealSuccess').style.display = 'block';
+            window.scrollTo(0, 0);
+        } else {
+            alert('There was an error sending your appeal. Please try again or contact staff on Discord.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Could not connect to the server. Please check your internet or contact staff.');
+    });
 }
 </script>
 </body>
