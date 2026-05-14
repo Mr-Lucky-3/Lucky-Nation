@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Leaderboards &middot; Lucky Nation</title>
+  <meta name="description" content="Top players on Lucky Nation by wealth, kills, playtime, and votes."/>
+  <meta property="og:title" content="Leaderboards &middot; Lucky Nation"/>
+  <meta property="og:description" content="Top players on Lucky Nation by wealth, kills, playtime, and votes."/>
+  <meta property="og:image" content="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6986e5d9a0adf68cbfc217ea/1363cce94_Screenshot2026-02-06235207.png"/>
+  <meta property="og:type" content="website"/>
+  <meta name="theme-color" content="#ef4444"/>
+  <link rel="manifest" href="site.webmanifest"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">&#9876;&#65039; <span>LUCKY</span>&nbsp;NATION</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="announcements.html">News</a></li>
+        <li><a href="rules.html">Rules</a></li>
+        <li><a href="how-to-join.html">Join</a></li>
+        <li><a href="staff.html">Staff</a></li>
+        <li><a href="vote.html">Vote</a></li>
+        <li><a href="store.html">Store</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="leaderboards.html">Leaderboards</a></li>
+      </ul>
+      <a href="how-to-join.html" class="nav-join-btn">&#9654; Join Now</a>
+      <button class="nav-hamburger" id="navHamburger" onclick="toggleNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="ambient">
+    <div class="ambient-blob ambient-blob-top"></div>
+    <div class="ambient-blob ambient-blob-bottom"></div>
+  </div>
+
+  <section class="page-hero">
+    <h1><span class="gradient-text">Leaderboards</span></h1>
+    <p>Who's dominating Lucky Nation? Rankings update daily. Climb the boards and earn bragging rights.</p>
+  </section>
+  <section class="section"><div class="container">
+    <div class="lb-tabs">
+      <button class="lb-tab active" onclick="switchLb('money',this)">&#128176; Richest</button>
+      <button class="lb-tab" onclick="switchLb('kills',this)">&#9876;&#65039; Kills</button>
+      <button class="lb-tab" onclick="switchLb('playtime',this)">&#9201; Playtime</button>
+      <button class="lb-tab" onclick="switchLb('votes',this)">&#128379; Votes</button>
+    </div>
+    <div class="card">
+      <div id="lb-money" class="lb-panel active"><div id="lb-money-c"></div></div>
+      <div id="lb-kills" class="lb-panel"><div id="lb-kills-c"></div></div>
+      <div id="lb-playtime" class="lb-panel"><div id="lb-playtime-c"></div></div>
+      <div id="lb-votes" class="lb-panel"><div id="lb-votes-c"></div></div>
+    </div>
+    <p style="text-align:center;color:var(--gray-5);margin-top:1.5rem;font-size:.8rem;">Rankings update every 24 hours &middot; Connect to the game for live stats</p>
+  </div></section>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-row">
+        <div>
+          <div class="footer-logo"><span class="gradient-text">LUCKY</span> NATION</div>
+          <div class="footer-tagline">A fair, player-driven Minecraft experience</div>
+        </div>
+        <div class="footer-meta">
+          <div class="server-status"><div class="status-dot" id="fDot"></div><span id="fSt">Checking...</span></div>
+          <span class="players-text" id="fPl"></span>
+          <span class="footer-ip">mr-lucky-army.falix.gg:29035</span>
+          <a href="https://discord.gg/ppqBAUPrqf" target="_blank" class="footer-discord">Discord &#8599;</a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Home</a><a href="announcements.html">News</a>
+        <a href="rules.html">Rules</a><a href="how-to-join.html">How to Join</a>
+        <a href="staff.html">Staff</a><a href="vote.html">Vote</a>
+        <a href="store.html">Store</a><a href="faq.html">FAQ</a>
+        <a href="appeal.html">Appeal</a><a href="leaderboards.html">Leaderboards</a>
+        <a href="changelog.html">Changelog</a>
+      </div>
+      <div class="footer-copy">&copy; 2025 Lucky Nation &middot; Not affiliated with Mojang Studios</div>
+    </div>
+  </footer>
+
+<script>
+function toggleNav(){
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById('navHamburger').classList.toggle('open');
+}
+(function(){
+  var p=location.pathname.split('/').pop()||'index.html';
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')===p) a.classList.add('active');
+  });
+})();
+// footer server status
+fetch('https://api.mcsrvstat.us/2/mr-lucky-army.falix.gg:29035')
+  .then(function(r){return r.json();}).then(function(d){
+    var dot=document.getElementById('fDot'),st=document.getElementById('fSt'),pl=document.getElementById('fPl');
+    if(!dot)return;
+    if(d.online){dot.className='status-dot online';st.textContent='Online';if(pl&&d.players)pl.textContent=d.players.online+'/'+d.players.max+' players';}
+    else{dot.className='status-dot offline';st.textContent='Offline';}
+  }).catch(function(){});
+</script>
+<script>
+function switchLb(n,b){document.querySelectorAll('.lb-panel').forEach(function(p){p.classList.remove('active');});document.querySelectorAll('.lb-tab').forEach(function(x){x.classList.remove('active');});document.getElementById('lb-'+n).classList.add('active');b.classList.add('active');}
+function rc(i){return i===0?'gold':i===1?'silver':i===2?'bronze':'';}
+function medal(i){return i===0?'&#129351;':i===1?'&#129352;':i===2?'&#129353;':'#'+(i+1);}
+function tbl(id,rows,label){
+  var h='<table class="lb-table"><thead><tr><th>Rank</th><th>Player</th><th>'+label+'</th></tr></thead><tbody>';
+  rows.forEach(function(r,i){h+='<tr><td class="lb-rank '+rc(i)+'">'+medal(i)+'</td><td><div class="lb-player"><div class="lb-skin"><img src="https://crafthead.net/helm/'+r.n+'" loading="lazy"></div><span class="lb-name">'+r.n+'</span></div></td><td class="lb-value">'+r.v+'</td></tr>';});
+  h+='</tbody></table>';
+  document.getElementById(id).innerHTML=h;
+}
+tbl('lb-money-c',[{n:'MrLucky3',v:'$2,450,000'},{n:'Steve',v:'$1,200,000'},{n:'Notch',v:'$987,500'},{n:'Herobrine',v:'$654,200'},{n:'Alex',v:'$432,100'},{n:'CreeperKing',v:'$310,000'},{n:'DiamondHunter',v:'$289,500'},{n:'SurvivalPro',v:'$201,000'},{n:'FarmMaster',v:'$178,300'},{n:'BuilderBob',v:'$120,000'}],'Net Worth');
+tbl('lb-kills-c',[{n:'PvPGod',v:'4,201'},{n:'BladeRunner',v:'3,550'},{n:'StealthArcher',v:'2,890'},{n:'MrLucky3',v:'2,100'},{n:'CombatAce',v:'1,750'},{n:'SwordMaster',v:'1,320'},{n:'ArenaKing',v:'987'},{n:'Herobrine',v:'876'},{n:'SniperElite',v:'765'},{n:'WarriorX',v:'654'}],'PvP Kills');
+tbl('lb-playtime-c',[{n:'MrLucky3',v:'1,204 hrs'},{n:'Steve',v:'892 hrs'},{n:'FarmMaster',v:'750 hrs'},{n:'BuilderBob',v:'680 hrs'},{n:'SurvivalPro',v:'610 hrs'},{n:'DiamondHunter',v:'540 hrs'},{n:'CreeperKing',v:'482 hrs'},{n:'Alex',v:'401 hrs'},{n:'Notch',v:'389 hrs'},{n:'Herobrine',v:'310 hrs'}],'Playtime');
+tbl('lb-votes-c',[{n:'VotingLegend',v:'312'},{n:'MrLucky3',v:'285'},{n:'SupporterPro',v:'240'},{n:'LoyalPlayer',v:'198'},{n:'Alex',v:'175'},{n:'Steve',v:'152'},{n:'DailyVoter',v:'131'},{n:'CreeperKing',v:'110'},{n:'BuilderBob',v:'98'},{n:'SurvivalPro',v:'87'}],'Votes');
+</script>
+</body>
+</html>
