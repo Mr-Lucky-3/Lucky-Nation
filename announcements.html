@@ -191,8 +191,7 @@
 
       // Sort newest first (by id descending — higher id = newer)
       const sorted = [...announcements].sort((a, b) => b.id - a.id);
-
-      feed.innerHTML = sorted.map((a, i) => {
+        feed.innerHTML = sorted.map((a, i) => {
         let mediaHtml = '';
         if (a.media && a.media.length === 1) {
           const m = a.media[0];
@@ -207,19 +206,6 @@
               ? `<video src="${m.url}" controls></video>`
               : `<img src="${m.url}" alt="" />`
           ).join('');
-          mediaHtml = `<div class="announcement-media multi">${items}</div>`;
-        }
-
-        return `
-          <div class="announcement-card" style="animation-delay:${i * 0.05}s">
-            ${mediaHtml}
-            <div class="announcement-body">
-              <h3>${escHtml(a.title)}</h3>
-              <p class="announcement-meta">Posted by ${escHtml(a.author)}</p>
-              <p class="announcement-content">${escHtml(a.content)}</p>
-            </div>
-          </div>`;
-      }).join('');
           mediaHtml = `<div class="announcement-media multi">${items}</div>`;
         }
 
