@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>How to Join &middot; Lucky Nation</title>
+  <meta name="description" content="Step-by-step guide to join Lucky Nation on Java or Bedrock."/>
+  <meta property="og:title" content="How to Join &middot; Lucky Nation"/>
+  <meta property="og:description" content="Step-by-step guide to join Lucky Nation on Java or Bedrock."/>
+  <meta property="og:image" content="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6986e5d9a0adf68cbfc217ea/1363cce94_Screenshot2026-02-06235207.png"/>
+  <meta property="og:type" content="website"/>
+  <meta name="theme-color" content="#ef4444"/>
+  <link rel="manifest" href="site.webmanifest"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">&#9876;&#65039; <span>LUCKY</span>&nbsp;NATION</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="announcements.html">News</a></li>
+        <li><a href="rules.html">Rules</a></li>
+        <li><a href="how-to-join.html">Join</a></li>
+        <li><a href="staff.html">Staff</a></li>
+        <li><a href="vote.html">Vote</a></li>
+        <li><a href="store.html">Store</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="leaderboards.html">Leaderboards</a></li>
+      </ul>
+      <a href="how-to-join.html" class="nav-join-btn">&#9654; Join Now</a>
+      <button class="nav-hamburger" id="navHamburger" onclick="toggleNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="ambient">
+    <div class="ambient-blob ambient-blob-top"></div>
+    <div class="ambient-blob ambient-blob-bottom"></div>
+  </div>
+
+  <section class="page-hero">
+    <h1>How to <span class="gradient-text">Join</span></h1>
+    <p>Java or Bedrock, we've got you covered. Follow the steps below and you'll be in-game in under 2 minutes.</p>
+  </section>
+  <section class="section"><div class="container" style="max-width:800px;">
+    <div class="join-tabs">
+      <button class="join-tab active" onclick="switchTab('java',this)">&#9749; Java Edition</button>
+      <button class="join-tab" onclick="switchTab('bedrock',this)">&#128241; Bedrock Edition</button>
+    </div>
+    <div id="tab-java" class="join-panel active"><div class="card"><div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-content"><h3>Open Minecraft Java Edition</h3><p>Make sure you're on version <strong>1.21.x</strong>.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-content"><h3>Go to Multiplayer</h3><p>Click <strong>Multiplayer</strong> from the main menu, then <strong>Add Server</strong>.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-content"><h3>Enter the server address</h3><p>Server Address: <code>mr-lucky-army.falix.gg:29035</code></p><p style="margin-top:.5rem;font-size:.8rem;color:var(--gray-5);">Or direct IP: <code>167.235.93.185:29035</code></p></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-content"><h3>Join &amp; get started!</h3><p>Click <strong>Done</strong>, then double-click the server. Welcome to Lucky Nation!</p></div></div>
+    </div></div></div>
+    <div id="tab-bedrock" class="join-panel"><div class="card"><div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-content"><h3>Open Minecraft Bedrock</h3><p>Works on Windows 10/11, iOS, Android, Xbox, PlayStation, and Switch.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-content"><h3>Go to Play &rarr; Servers</h3><p>Scroll past the featured servers and tap <strong>Add Server</strong>.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-content"><h3>Enter connection details</h3><p>Address: <code>mr-lucky-army.falix.gg</code> &nbsp; Port: <code>29035</code></p></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-content"><h3>Save and connect</h3><p>Tap <strong>Save</strong>, then select the server. Powered by Geyser!</p></div></div>
+    </div></div></div>
+    <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:.75rem;padding:1.25rem;margin:2rem 0;">
+      <p style="font-size:.9rem;color:var(--gray-3);"><strong style="color:var(--red);">&#9888; Note:</strong> Can't connect? Make sure you're on Java 1.21.x and using port 29035. Ask in our <a href="https://discord.gg/ppqBAUPrqf" target="_blank" style="color:#5865F2;">#help Discord channel</a>.</p>
+    </div>
+    <h2 style="font-size:1.5rem;font-weight:700;margin-bottom:1.5rem;">&#10067; Common Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">What version does the server use?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Java 1.21.x with Fabric mods. Bedrock players join via Geyser on any recent version.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Is it free to play?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">100% free. Zero pay-to-win. Our store sells cosmetic-only ranks.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Can I use mods?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Yes — Sodium, Iris, Lithium, Replay Mod are all fine. Mods that give gameplay advantages (x-ray, kill aura) are banned.</div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Is proximity voice chat required?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Nope, it's optional. Install the Simple Voice Chat mod to use it on Java, or just play without it.</div></div>
+    </div>
+  </div></section>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-row">
+        <div>
+          <div class="footer-logo"><span class="gradient-text">LUCKY</span> NATION</div>
+          <div class="footer-tagline">A fair, player-driven Minecraft experience</div>
+        </div>
+        <div class="footer-meta">
+          <div class="server-status"><div class="status-dot" id="fDot"></div><span id="fSt">Checking...</span></div>
+          <span class="players-text" id="fPl"></span>
+          <span class="footer-ip">mr-lucky-army.falix.gg:29035</span>
+          <a href="https://discord.gg/ppqBAUPrqf" target="_blank" class="footer-discord">Discord &#8599;</a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Home</a><a href="announcements.html">News</a>
+        <a href="rules.html">Rules</a><a href="how-to-join.html">How to Join</a>
+        <a href="staff.html">Staff</a><a href="vote.html">Vote</a>
+        <a href="store.html">Store</a><a href="faq.html">FAQ</a>
+        <a href="appeal.html">Appeal</a><a href="leaderboards.html">Leaderboards</a>
+        <a href="changelog.html">Changelog</a>
+      </div>
+      <div class="footer-copy">&copy; 2025 Lucky Nation &middot; Not affiliated with Mojang Studios</div>
+    </div>
+  </footer>
+
+<script>
+function toggleNav(){
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById('navHamburger').classList.toggle('open');
+}
+(function(){
+  var p=location.pathname.split('/').pop()||'index.html';
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')===p) a.classList.add('active');
+  });
+})();
+// footer server status
+fetch('https://api.mcsrvstat.us/2/mr-lucky-army.falix.gg:29035')
+  .then(function(r){return r.json();}).then(function(d){
+    var dot=document.getElementById('fDot'),st=document.getElementById('fSt'),pl=document.getElementById('fPl');
+    if(!dot)return;
+    if(d.online){dot.className='status-dot online';st.textContent='Online';if(pl&&d.players)pl.textContent=d.players.online+'/'+d.players.max+' players';}
+    else{dot.className='status-dot offline';st.textContent='Offline';}
+  }).catch(function(){});
+</script>
+<script>
+function switchTab(n,b){document.querySelectorAll('.join-panel').forEach(function(p){p.classList.remove('active');});document.querySelectorAll('.join-tab').forEach(function(x){x.classList.remove('active');});document.getElementById('tab-'+n).classList.add('active');b.classList.add('active');}
+function toggleFaq(b){b.parentElement.classList.toggle('open');}
+</script>
+</body>
+</html>
