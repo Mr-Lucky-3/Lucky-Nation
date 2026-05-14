@@ -4,9 +4,39 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lucky Nation</title>
+  <meta name="description" content="Lucky Nation — A survival Minecraft server with player-driven economy, massive world, and zero pay-to-win mechanics. Java &amp; Bedrock compatible."/>
+  <meta property="og:title" content="Lucky Nation Minecraft Server"/>
+  <meta property="og:description" content="A survival Minecraft server with player-driven economy and zero pay-to-win mechanics."/>
+  <meta property="og:image" content="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6986e5d9a0adf68cbfc217ea/1363cce94_Screenshot2026-02-06235207.png"/>
+  <meta property="og:type" content="website"/>
+  <meta name="theme-color" content="#ef4444"/>
+  <link rel="manifest" href="site.webmanifest"/>
+  <link rel="icon" href="favicon.ico" type="image/x-icon"/>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+
+  <!-- Nav -->
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">⚔️ <span>LUCKY</span>&nbsp;NATION</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="announcements.html">News</a></li>
+        <li><a href="rules.html">Rules</a></li>
+        <li><a href="how-to-join.html">Join</a></li>
+        <li><a href="staff.html">Staff</a></li>
+        <li><a href="vote.html">Vote</a></li>
+        <li><a href="store.html">Store</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="leaderboards.html">Leaderboards</a></li>
+      </ul>
+      <a href="how-to-join.html" class="nav-join-btn">▶ Join Now</a>
+      <button class="nav-hamburger" id="navHamburger" onclick="toggleNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
 
   <!-- Ambient Background -->
   <div class="ambient">
@@ -221,6 +251,19 @@
           <a href="https://discord.gg/ppqBAUPrqf" target="_blank" rel="noopener noreferrer" class="footer-discord">Discord</a>
         </div>
       </div>
+      <div class="footer-links" style="margin-top:1.5rem;">
+        <a href="index.html">Home</a>
+        <a href="announcements.html">News</a>
+        <a href="rules.html">Rules</a>
+        <a href="how-to-join.html">How to Join</a>
+        <a href="staff.html">Staff</a>
+        <a href="vote.html">Vote</a>
+        <a href="store.html">Store</a>
+        <a href="faq.html">FAQ</a>
+        <a href="appeal.html">Appeal</a>
+        <a href="leaderboards.html">Leaderboards</a>
+        <a href="changelog.html">Changelog</a>
+      </div>
       <div class="footer-copy">
         &copy; <span id="year"></span> Lucky Nation. Not affiliated with Mojang Studios.
       </div>
@@ -228,5 +271,16 @@
   </footer>
 
   <script src="script.js"></script>
+
+<script>
+function toggleNav(){
+  const links = document.getElementById('navLinks');
+  const ham   = document.getElementById('navHamburger');
+  links.classList.toggle('open');
+  ham.classList.toggle('open');
+}
+// footer status already handled by existing script.js
+</script>
 </body>
 </html>
+
