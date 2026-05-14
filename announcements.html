@@ -193,9 +193,6 @@
       const sorted = [...announcements].sort((a, b) => b.id - a.id);
 
       feed.innerHTML = sorted.map((a, i) => {
-        const dateStr = new Date(a.date + 'T12:00:00').toLocaleDateString('en-US', {
-          year: 'numeric', month: 'long', day: 'numeric'
-        });
 
         let mediaHtml = '';
         if (a.media && a.media.length === 1) {
@@ -219,7 +216,7 @@
             ${mediaHtml}
             <div class="announcement-body">
               <h3>${escHtml(a.title)}</h3>
-              <p class="announcement-meta">Posted by ${escHtml(a.author)} &bull; ${dateStr}</p>
+              <p class="announcement-meta">Posted by ${escHtml(a.author)}</p>
               <p class="announcement-content">${escHtml(a.content)}</p>
             </div>
           </div>`;
