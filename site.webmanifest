@@ -1,0 +1,16 @@
+{
+  "name": "Lucky Nation",
+  "short_name": "LuckyNation",
+  "description": "A survival Minecraft server with a player-driven economy.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#ef4444",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
