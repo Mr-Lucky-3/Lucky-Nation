@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Vote &middot; Lucky Nation</title>
+  <meta name="description" content="Vote for Lucky Nation and earn in-game rewards."/>
+  <meta property="og:title" content="Vote &middot; Lucky Nation"/>
+  <meta property="og:description" content="Vote for Lucky Nation and earn in-game rewards."/>
+  <meta property="og:image" content="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6986e5d9a0adf68cbfc217ea/1363cce94_Screenshot2026-02-06235207.png"/>
+  <meta property="og:type" content="website"/>
+  <meta name="theme-color" content="#ef4444"/>
+  <link rel="manifest" href="site.webmanifest"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">&#9876;&#65039; <span>LUCKY</span>&nbsp;NATION</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="announcements.html">News</a></li>
+        <li><a href="rules.html">Rules</a></li>
+        <li><a href="how-to-join.html">Join</a></li>
+        <li><a href="staff.html">Staff</a></li>
+        <li><a href="vote.html">Vote</a></li>
+        <li><a href="store.html">Store</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="leaderboards.html">Leaderboards</a></li>
+      </ul>
+      <a href="how-to-join.html" class="nav-join-btn">&#9654; Join Now</a>
+      <button class="nav-hamburger" id="navHamburger" onclick="toggleNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="ambient">
+    <div class="ambient-blob ambient-blob-top"></div>
+    <div class="ambient-blob ambient-blob-bottom"></div>
+  </div>
+
+  <section class="page-hero">
+    <h1><span class="gradient-text">Vote</span> for Us</h1>
+    <p>Voting takes 30 seconds and earns you in-game rewards. Every vote helps more players discover Lucky Nation!</p>
+  </section>
+  <section class="section"><div class="container">
+    <div class="vote-banner"><h2>&#127873; Vote Rewards</h2><p>Each vote grants <strong>$500 in-game cash</strong>, a random loot crate key, and XP boosts. Vote all sites daily for max rewards!</p></div>
+    <div class="vote-grid">
+      <a href="https://minecraft-server-list.com" target="_blank" class="vote-card"><div class="vote-site-icon" style="background:rgba(239,68,68,.15);">&#128379;</div><div><div class="vote-site-name">Minecraft Server List</div><div class="vote-site-desc">One of the largest MC server directories. Resets every 24 hours.</div></div><div class="vote-site-btn">Vote now &rarr;</div></a>
+      <a href="https://minecraftservers.org" target="_blank" class="vote-card"><div class="vote-site-icon" style="background:rgba(99,102,241,.15);">&#11088;</div><div><div class="vote-site-name">MinecraftServers.org</div><div class="vote-site-desc">High-traffic listing. Your vote boosts our ranking fast.</div></div><div class="vote-site-btn">Vote now &rarr;</div></a>
+      <a href="https://topminecraftservers.org" target="_blank" class="vote-card"><div class="vote-site-icon" style="background:rgba(245,158,11,.15);">&#127942;</div><div><div class="vote-site-name">TopMinecraftServers</div><div class="vote-site-desc">Great exposure for players searching survival servers.</div></div><div class="vote-site-btn">Vote now &rarr;</div></a>
+      <a href="https://minecraft-mp.com" target="_blank" class="vote-card"><div class="vote-site-icon" style="background:rgba(16,185,129,.15);">&#127758;</div><div><div class="vote-site-name">Minecraft-MP</div><div class="vote-site-desc">International audience. Your vote reaches global players.</div></div><div class="vote-site-btn">Vote now &rarr;</div></a>
+      <a href="https://minecraft.buzz" target="_blank" class="vote-card"><div class="vote-site-icon" style="background:rgba(168,85,247,.15);">&#9889;</div><div><div class="vote-site-name">Minecraft Buzz</div><div class="vote-site-desc">Growing directory with active community filters.</div></div><div class="vote-site-btn">Vote now &rarr;</div></a>
+      <a href="https://bestminecraftservers.com" target="_blank" class="vote-card"><div class="vote-site-icon" style="background:rgba(236,72,153,.15);">&#128142;</div><div><div class="vote-site-name">Best Minecraft Servers</div><div class="vote-site-desc">Quality listings. Rewards reset every 24 hours.</div></div><div class="vote-site-btn">Vote now &rarr;</div></a>
+    </div>
+    <p style="text-align:center;color:var(--gray-5);margin-top:2rem;font-size:.85rem;">&#9888;&#65039; Update vote links with your actual listing URLs before going live.</p>
+  </div></section>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-row">
+        <div>
+          <div class="footer-logo"><span class="gradient-text">LUCKY</span> NATION</div>
+          <div class="footer-tagline">A fair, player-driven Minecraft experience</div>
+        </div>
+        <div class="footer-meta">
+          <div class="server-status"><div class="status-dot" id="fDot"></div><span id="fSt">Checking...</span></div>
+          <span class="players-text" id="fPl"></span>
+          <span class="footer-ip">mr-lucky-army.falix.gg:29035</span>
+          <a href="https://discord.gg/ppqBAUPrqf" target="_blank" class="footer-discord">Discord &#8599;</a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Home</a><a href="announcements.html">News</a>
+        <a href="rules.html">Rules</a><a href="how-to-join.html">How to Join</a>
+        <a href="staff.html">Staff</a><a href="vote.html">Vote</a>
+        <a href="store.html">Store</a><a href="faq.html">FAQ</a>
+        <a href="appeal.html">Appeal</a><a href="leaderboards.html">Leaderboards</a>
+        <a href="changelog.html">Changelog</a>
+      </div>
+      <div class="footer-copy">&copy; 2025 Lucky Nation &middot; Not affiliated with Mojang Studios</div>
+    </div>
+  </footer>
+
+<script>
+function toggleNav(){
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById('navHamburger').classList.toggle('open');
+}
+(function(){
+  var p=location.pathname.split('/').pop()||'index.html';
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')===p) a.classList.add('active');
+  });
+})();
+// footer server status
+fetch('https://api.mcsrvstat.us/2/mr-lucky-army.falix.gg:29035')
+  .then(function(r){return r.json();}).then(function(d){
+    var dot=document.getElementById('fDot'),st=document.getElementById('fSt'),pl=document.getElementById('fPl');
+    if(!dot)return;
+    if(d.online){dot.className='status-dot online';st.textContent='Online';if(pl&&d.players)pl.textContent=d.players.online+'/'+d.players.max+' players';}
+    else{dot.className='status-dot offline';st.textContent='Offline';}
+  }).catch(function(){});
+</script>
+</body>
+</html>
