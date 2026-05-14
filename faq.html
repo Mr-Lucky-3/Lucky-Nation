@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>FAQ &middot; Lucky Nation</title>
+  <meta name="description" content="Frequently asked questions about Lucky Nation Minecraft server."/>
+  <meta property="og:title" content="FAQ &middot; Lucky Nation"/>
+  <meta property="og:description" content="Frequently asked questions about Lucky Nation Minecraft server."/>
+  <meta property="og:image" content="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6986e5d9a0adf68cbfc217ea/1363cce94_Screenshot2026-02-06235207.png"/>
+  <meta property="og:type" content="website"/>
+  <meta name="theme-color" content="#ef4444"/>
+  <link rel="manifest" href="site.webmanifest"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">&#9876;&#65039; <span>LUCKY</span>&nbsp;NATION</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="announcements.html">News</a></li>
+        <li><a href="rules.html">Rules</a></li>
+        <li><a href="how-to-join.html">Join</a></li>
+        <li><a href="staff.html">Staff</a></li>
+        <li><a href="vote.html">Vote</a></li>
+        <li><a href="store.html">Store</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="leaderboards.html">Leaderboards</a></li>
+      </ul>
+      <a href="how-to-join.html" class="nav-join-btn">&#9654; Join Now</a>
+      <button class="nav-hamburger" id="navHamburger" onclick="toggleNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="ambient">
+    <div class="ambient-blob ambient-blob-top"></div>
+    <div class="ambient-blob ambient-blob-bottom"></div>
+  </div>
+
+  <section class="page-hero">
+    <h1>Frequently Asked <span class="gradient-text">Questions</span></h1>
+    <p>Can't find your answer? Ask in our Discord and we'll help you out.</p>
+  </section>
+  <section class="section"><div class="container" style="max-width:760px;">
+    <div class="faq-cats">
+      <button class="faq-cat-btn active" onclick="filterFaq('all',this)">All</button>
+      <button class="faq-cat-btn" onclick="filterFaq('gameplay',this)">Gameplay</button>
+      <button class="faq-cat-btn" onclick="filterFaq('technical',this)">Technical</button>
+      <button class="faq-cat-btn" onclick="filterFaq('rules',this)">Rules &amp; Bans</button>
+      <button class="faq-cat-btn" onclick="filterFaq('economy',this)">Economy</button>
+    </div>
+    <div class="faq-list" id="faqList">
+      <div class="faq-item" data-cat="technical"><button class="faq-q" onclick="toggleFaq(this)">What version does the server run?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Java 1.21.x with Fabric mods. Bedrock players connect via Geyser on any recent version.</div></div>
+      <div class="faq-item" data-cat="technical"><button class="faq-q" onclick="toggleFaq(this)">Why can't I connect?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Make sure you're on Java 1.21.x and entering <code>mr-lucky-army.falix.gg:29035</code> (port separate on Bedrock). If the server shows offline, it may be restarting — try again in a few minutes.</div></div>
+      <div class="faq-item" data-cat="technical"><button class="faq-q" onclick="toggleFaq(this)">The server is lagging — what do I do?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Check your own connection first. If it's server-side, look at #status in Discord. Performance mods like Sodium and Lithium can greatly improve your own FPS.</div></div>
+      <div class="faq-item" data-cat="gameplay"><button class="faq-q" onclick="toggleFaq(this)">How does the economy work?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Fully player-driven. Earn money by selling items with <code>/sell</code>, running a player shop, or trading. Prices shift based on supply and demand.</div></div>
+      <div class="faq-item" data-cat="gameplay"><button class="faq-q" onclick="toggleFaq(this)">How do I claim land?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Use <code>/claim</code> with a golden shovel. You earn more claim blocks over time. Use <code>/trust [player]</code> to let friends build in your claim.</div></div>
+      <div class="faq-item" data-cat="gameplay"><button class="faq-q" onclick="toggleFaq(this)">How does PvP work?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">PvP is off in the open world. Fight in dedicated arenas at spawn, or use <code>/pvp toggle</code> to mutually consent anywhere.</div></div>
+      <div class="faq-item" data-cat="rules"><button class="faq-q" onclick="toggleFaq(this)">I got griefed — what do I do?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Open a ticket in Discord #support immediately. Do NOT repair the damage yourself — staff need to see the scene to rollback and punish the griefer.</div></div>
+      <div class="faq-item" data-cat="rules"><button class="faq-q" onclick="toggleFaq(this)">How do I appeal a ban?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Fill out our <a href="appeal.html" style="color:var(--red);">ban appeal form</a>. Appeals are reviewed within 48&ndash;72 hours. Be honest &mdash; it really helps.</div></div>
+      <div class="faq-item" data-cat="rules"><button class="faq-q" onclick="toggleFaq(this)">Are hacked clients allowed?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">No. Any client giving an unfair advantage results in an immediate permanent ban. We use active anti-cheat.</div></div>
+      <div class="faq-item" data-cat="economy"><button class="faq-q" onclick="toggleFaq(this)">How do I set up a player shop?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Place a chest, shift-click it with a sign, and type the price and item name. Others can buy by right-clicking. You keep 100% of sales.</div></div>
+      <div class="faq-item" data-cat="economy"><button class="faq-q" onclick="toggleFaq(this)">Can I sell anything to the server?<svg class="faq-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1rem;height:1rem;margin-left:auto;"><polyline points="6 9 12 15 18 9"/></svg></button><div class="faq-a">Most items work with <code>/sell hand</code> or <code>/sell all</code>. Prices are dynamic — bulk selling may temporarily lower an item's value.</div></div>
+    </div>
+    <div style="text-align:center;margin-top:3rem;">
+      <p style="color:var(--gray-5);margin-bottom:1rem;font-size:.9rem;">Still have questions?</p>
+      <a href="https://discord.gg/ppqBAUPrqf" target="_blank" class="btn btn-discord">Ask in Discord</a>
+    </div>
+  </div></section>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-row">
+        <div>
+          <div class="footer-logo"><span class="gradient-text">LUCKY</span> NATION</div>
+          <div class="footer-tagline">A fair, player-driven Minecraft experience</div>
+        </div>
+        <div class="footer-meta">
+          <div class="server-status"><div class="status-dot" id="fDot"></div><span id="fSt">Checking...</span></div>
+          <span class="players-text" id="fPl"></span>
+          <span class="footer-ip">mr-lucky-army.falix.gg:29035</span>
+          <a href="https://discord.gg/ppqBAUPrqf" target="_blank" class="footer-discord">Discord &#8599;</a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Home</a><a href="announcements.html">News</a>
+        <a href="rules.html">Rules</a><a href="how-to-join.html">How to Join</a>
+        <a href="staff.html">Staff</a><a href="vote.html">Vote</a>
+        <a href="store.html">Store</a><a href="faq.html">FAQ</a>
+        <a href="appeal.html">Appeal</a><a href="leaderboards.html">Leaderboards</a>
+        <a href="changelog.html">Changelog</a>
+      </div>
+      <div class="footer-copy">&copy; 2025 Lucky Nation &middot; Not affiliated with Mojang Studios</div>
+    </div>
+  </footer>
+
+<script>
+function toggleNav(){
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById('navHamburger').classList.toggle('open');
+}
+(function(){
+  var p=location.pathname.split('/').pop()||'index.html';
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')===p) a.classList.add('active');
+  });
+})();
+// footer server status
+fetch('https://api.mcsrvstat.us/2/mr-lucky-army.falix.gg:29035')
+  .then(function(r){return r.json();}).then(function(d){
+    var dot=document.getElementById('fDot'),st=document.getElementById('fSt'),pl=document.getElementById('fPl');
+    if(!dot)return;
+    if(d.online){dot.className='status-dot online';st.textContent='Online';if(pl&&d.players)pl.textContent=d.players.online+'/'+d.players.max+' players';}
+    else{dot.className='status-dot offline';st.textContent='Offline';}
+  }).catch(function(){});
+</script>
+<script>
+function toggleFaq(b){b.parentElement.classList.toggle('open');}
+function filterFaq(cat,btn){
+  document.querySelectorAll('.faq-cat-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  document.querySelectorAll('.faq-item').forEach(function(item){
+    item.style.display=(cat==='all'||item.dataset.cat===cat)?'':'none';
+  });
+}
+</script>
+</body>
+</html>
