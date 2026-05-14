@@ -6,7 +6,6 @@
   <title>Announcements – Lucky Nation</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* ── Announcements-specific styles ── */
     .announcements-header {
       position: relative; z-index: 1;
       border-bottom: 1px solid rgba(255,255,255,.06);
@@ -47,6 +46,11 @@
       border-radius: 1rem;
       overflow: hidden;
       margin-bottom: 1.5rem;
+      animation: fadeInUp .35s ease both;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     .announcement-media img,
@@ -66,6 +70,24 @@
     .announcement-body h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: .25rem; }
     .announcement-meta  { font-size: .8rem; color: var(--gray-4); margin-bottom: 1rem; }
     .announcement-content { color: #d1d5db; line-height: 1.7; white-space: pre-wrap; font-size: .95rem; }
+
+    .no-announcements {
+      text-align: center; color: var(--gray-4);
+      padding: 4rem 0; font-size: .95rem;
+    }
+
+    .loading-spinner {
+      display: flex; justify-content: center; padding: 3rem 0;
+    }
+    .loading-spinner::after {
+      content: "";
+      width: 2rem; height: 2rem;
+      border: 3px solid rgba(255,255,255,.15);
+      border-top-color: var(--red);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -94,29 +116,9 @@
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════════════
-         ANNOUNCEMENTS — add new ones at the top
-         ══════════════════════════════════════════════ -->
-
-    <div class="announcement-card">
-      <!-- Optional media: uncomment and set src to add an image
-      <div class="announcement-media">
-        <img src="your-image.png" alt="" />
-      </div>
-      -->
-      <div class="announcement-body">
-        <h3>Welcome to Lucky Nation!</h3>
-        <p class="announcement-meta">Posted by Admin &bull; April 24, 2026</p>
-        <p class="announcement-content">Hey everyone, welcome to the official Lucky Nation website!
-
-The server is a survival Minecraft experience focused on a player-driven economy, massive world exploration, and zero pay-to-win mechanics.
-
-Join us at mr-lucky-army.falix.gg:29035 (Java &amp; Bedrock compatible) and say hi in our Discord. More updates coming soon!</p>
-      </div>
+    <div id="announcements-feed">
+      <div class="loading-spinner"></div>
     </div>
-
-    <!-- Copy the block above to add more announcements -->
-
   </main>
 
   <footer class="footer">
@@ -143,5 +145,72 @@ Join us at mr-lucky-army.falix.gg:29035 (Java &amp; Bedrock compatible) and say 
   </footer>
 
   <script src="script.js"></script>
+  <script>
+    (async () => {
+      const feed = document.getElementById('announcements-feed');
+
+      // Cache-bust so GitHub Pages always serves the latest JSON
+      const url = `announcements.json?v=${Date.now()}`;
+
+      let announcements;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(res.status);
+        announcements = await res.json();
+      } catch (err) {
+        feed.innerHTML = '<p class="no-announcements">Could not load announcements. Try again later.</p>';
+        return;
+      }
+
+      if (!announcements.length) {
+        feed.innerHTML = '<p class="no-announcements">No announcements yet. Check back soon!</p>';
+        return;
+      }
+
+      // Sort newest first (by id descending — higher id = newer)
+      const sorted = [...announcements].sort((a, b) => b.id - a.id);
+
+      feed.innerHTML = sorted.map((a, i) => {
+        const dateStr = new Date(a.date + 'T12:00:00').toLocaleDateString('en-US', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        let mediaHtml = '';
+        if (a.media && a.media.length === 1) {
+          const m = a.media[0];
+          if (m.type === 'image') {
+            mediaHtml = `<div class="announcement-media"><img src="${m.url}" alt="" /></div>`;
+          } else if (m.type === 'video') {
+            mediaHtml = `<div class="announcement-media"><video src="${m.url}" controls></video></div>`;
+          }
+        } else if (a.media && a.media.length > 1) {
+          const items = a.media.map(m =>
+            m.type === 'video'
+              ? `<video src="${m.url}" controls></video>`
+              : `<img src="${m.url}" alt="" />`
+          ).join('');
+          mediaHtml = `<div class="announcement-media multi">${items}</div>`;
+        }
+
+        return `
+          <div class="announcement-card" style="animation-delay:${i * 0.05}s">
+            ${mediaHtml}
+            <div class="announcement-body">
+              <h3>${escHtml(a.title)}</h3>
+              <p class="announcement-meta">Posted by ${escHtml(a.author)} &bull; ${dateStr}</p>
+              <p class="announcement-content">${escHtml(a.content)}</p>
+            </div>
+          </div>`;
+      }).join('');
+    })();
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+  </script>
 </body>
 </html>
