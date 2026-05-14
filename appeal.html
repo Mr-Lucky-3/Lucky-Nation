@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Ban Appeal &middot; Lucky Nation</title>
+  <meta name="description" content="Submit a ban appeal for Lucky Nation Minecraft server."/>
+  <meta property="og:title" content="Ban Appeal &middot; Lucky Nation"/>
+  <meta property="og:description" content="Submit a ban appeal for Lucky Nation Minecraft server."/>
+  <meta property="og:image" content="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6986e5d9a0adf68cbfc217ea/1363cce94_Screenshot2026-02-06235207.png"/>
+  <meta property="og:type" content="website"/>
+  <meta name="theme-color" content="#ef4444"/>
+  <link rel="manifest" href="site.webmanifest"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">&#9876;&#65039; <span>LUCKY</span>&nbsp;NATION</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="announcements.html">News</a></li>
+        <li><a href="rules.html">Rules</a></li>
+        <li><a href="how-to-join.html">Join</a></li>
+        <li><a href="staff.html">Staff</a></li>
+        <li><a href="vote.html">Vote</a></li>
+        <li><a href="store.html">Store</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="leaderboards.html">Leaderboards</a></li>
+      </ul>
+      <a href="how-to-join.html" class="nav-join-btn">&#9654; Join Now</a>
+      <button class="nav-hamburger" id="navHamburger" onclick="toggleNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="ambient">
+    <div class="ambient-blob ambient-blob-top"></div>
+    <div class="ambient-blob ambient-blob-bottom"></div>
+  </div>
+
+  <section class="page-hero">
+    <h1>Ban <span class="gradient-text">Appeal</span></h1>
+    <p>Fill out the form honestly. Appeals reviewed within 48&ndash;72 hours. Do not submit duplicates.</p>
+  </section>
+  <section class="section"><div class="container">
+    <div class="appeal-form" id="appealForm">
+      <div class="form-group"><label class="form-label">Minecraft Username *</label><input type="text" class="form-input" id="mcName" placeholder="YourUsername"/></div>
+      <div class="form-group"><label class="form-label">Discord Username</label><input type="text" class="form-input" id="discordName" placeholder="@username"/><span class="form-hint">Optional but speeds up review</span></div>
+      <div class="form-group"><label class="form-label">Type of Punishment *</label><select class="form-select" id="punishType"><option value="">Select one&hellip;</option><option>Temporary Ban</option><option>Permanent Ban</option><option>Mute</option><option>IP Ban</option><option>Other</option></select></div>
+      <div class="form-group"><label class="form-label">Approximate Ban Date *</label><input type="date" class="form-input" id="banDate"/></div>
+      <div class="form-group"><label class="form-label">Ban Reason (as shown) *</label><input type="text" class="form-input" id="banReason" placeholder="e.g. Hacking, Griefing"/></div>
+      <div class="form-group"><label class="form-label">Your Explanation *</label><textarea class="form-textarea" id="explanation" placeholder="Explain what happened from your perspective. Be honest." rows="5"></textarea></div>
+      <div class="form-group"><label class="form-label">Why should we unban you?</label><textarea class="form-textarea" id="whyUnban" placeholder="What has changed? Why won't this happen again?" rows="3"></textarea></div>
+      <div style="margin-top:1.5rem;"><button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="submitAppeal()">Submit Appeal</button></div>
+      <p style="text-align:center;color:var(--gray-5);font-size:.78rem;margin-top:1rem;">By submitting, you confirm all information is truthful. Lying in an appeal results in a permanent ban extension.</p>
+    </div>
+    <div class="form-success" id="appealSuccess">
+      <div class="form-success-icon">&#9989;</div>
+      <h3>Appeal Submitted!</h3>
+      <p>Your appeal has been received and will be reviewed within 48&ndash;72 hours. Check Discord #appeals for updates.</p>
+      <a href="index.html" class="btn btn-secondary" style="margin-top:1.5rem;display:inline-flex;">Return Home</a>
+    </div>
+  </div></section>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-row">
+        <div>
+          <div class="footer-logo"><span class="gradient-text">LUCKY</span> NATION</div>
+          <div class="footer-tagline">A fair, player-driven Minecraft experience</div>
+        </div>
+        <div class="footer-meta">
+          <div class="server-status"><div class="status-dot" id="fDot"></div><span id="fSt">Checking...</span></div>
+          <span class="players-text" id="fPl"></span>
+          <span class="footer-ip">mr-lucky-army.falix.gg:29035</span>
+          <a href="https://discord.gg/ppqBAUPrqf" target="_blank" class="footer-discord">Discord &#8599;</a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Home</a><a href="announcements.html">News</a>
+        <a href="rules.html">Rules</a><a href="how-to-join.html">How to Join</a>
+        <a href="staff.html">Staff</a><a href="vote.html">Vote</a>
+        <a href="store.html">Store</a><a href="faq.html">FAQ</a>
+        <a href="appeal.html">Appeal</a><a href="leaderboards.html">Leaderboards</a>
+        <a href="changelog.html">Changelog</a>
+      </div>
+      <div class="footer-copy">&copy; 2025 Lucky Nation &middot; Not affiliated with Mojang Studios</div>
+    </div>
+  </footer>
+
+<script>
+function toggleNav(){
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById('navHamburger').classList.toggle('open');
+}
+(function(){
+  var p=location.pathname.split('/').pop()||'index.html';
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')===p) a.classList.add('active');
+  });
+})();
+// footer server status
+fetch('https://api.mcsrvstat.us/2/mr-lucky-army.falix.gg:29035')
+  .then(function(r){return r.json();}).then(function(d){
+    var dot=document.getElementById('fDot'),st=document.getElementById('fSt'),pl=document.getElementById('fPl');
+    if(!dot)return;
+    if(d.online){dot.className='status-dot online';st.textContent='Online';if(pl&&d.players)pl.textContent=d.players.online+'/'+d.players.max+' players';}
+    else{dot.className='status-dot offline';st.textContent='Offline';}
+  }).catch(function(){});
+</script>
+<script>
+function submitAppeal(){
+  if(!document.getElementById('mcName').value.trim()||!document.getElementById('punishType').value||!document.getElementById('banReason').value.trim()||!document.getElementById('explanation').value.trim()){alert('Please fill out all required fields.');return;}
+  document.getElementById('appealForm').style.display='none';
+  document.getElementById('appealSuccess').style.display='block';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
