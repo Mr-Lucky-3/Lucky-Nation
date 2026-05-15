@@ -277,7 +277,8 @@
         currentClerkUser = null;
         updateAuthUI();
       } else {
-        window.location.href = clerk.instance.signInUrl;
+        const signInUrl = "https://premium-hound-13.accounts.dev/sign-in?redirect_url=" + encodeURIComponent(window.location.href);
+        window.location.href = signInUrl;
       }
     }
 
