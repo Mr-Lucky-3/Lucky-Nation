@@ -151,7 +151,7 @@
     </div>
 
     <div class="post-view" id="postView">
-      <button class="back-btn" onclick="goBack()">← Back to Forum</button>
+      <button class="back-btn" onclick="Back()">← Back to Forum</button>
       <div id="postDetail"></div>
       <div class="replies-section">
         <h3 id="repliesHeading">Replies</h3>
@@ -313,7 +313,53 @@
         btn.textContent = "Post";
       }
     }
-
+    async function openPost(postId) {
+      const listView = document.getElementById('listView');
+      const postView = document.getElementById('postView');
+      const postDetail = document.getElementById('postDetail');
+      
+      // 1. Hide list, show post view
+      listView.classList.add('hidden');
+      postView.classList.add('open');
+      postDetail.innerHTML = '<p>Loading post...</p>';
+  
+      try {
+          // 2. Fetch the latest posts
+          const res = await fetch(`${FORUM_API}?action=list_posts`);
+          const data = await res.json();
+          
+          // 3. Find the specific post by ID
+          const post = data.posts.find(p => p.id === postId);
+          
+          if (post) {
+              currentPostId = postId;
+              postDetail.innerHTML = `
+                  <div class="post-full">
+                      <h2 class="post-full-title">${escHtml(post.title)}</h2>
+                      <div class="post-full-meta">
+                          <span class="post-cat-badge">${escHtml(post.category)}</span>
+                          <span>by <b>${escHtml(post.author)}</b></span>
+                          <span>• ${new Date(post.created_at).toLocaleString()}</span>
+                      </div>
+                      <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:1.5rem 0;">
+                      <div class="post-full-content">${escHtml(post.content)}</div>
+                  </div>
+              `;
+              // We can add the Reply Form logic here later!
+          } else {
+              postDetail.innerHTML = '<p>Post not found.</p>';
+          }
+      } catch (e) {
+          postDetail.innerHTML = '<p>Error loading post details.</p>';
+      }
+  }
+  
+  // Function to go back to the main list
+  function Back() {
+      document.getElementById('postView').classList.remove('open');
+      document.getElementById('listView').classList.remove('hidden');
+      currentPostId = null;
+  }
     function escHtml(str) { return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
     function timeAgo(d) { return "recently"; } 
     function openNewPostModal() { document.getElementById('newPostModal').classList.add('open'); }
