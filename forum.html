@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Community Forum – Lucky Nation</title>
+  <meta name="description" content="Join the Lucky Nation community forum. Discuss the server, share suggestions, get help, and more."/>
+  <link rel="stylesheet" href="style.css" />
+  <script async crossorigin="anonymous" data-clerk-publishable-key="CLERK_PUBLISHABLE_KEY" src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+  <style>
+    .forum-layout { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:2rem 1.25rem 5rem; }
+    .forum-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:2rem; }
+    .forum-header h1 { font-size:clamp(1.6rem,4vw,2.2rem); font-weight:800; }
+    .forum-header p { color:var(--gray-4); font-size:.9rem; margin-top:.2rem; }
+    .auth-bar { display:flex; align-items:center; gap:.75rem; }
+    .auth-bar .user-info { font-size:.85rem; color:var(--gray-3); }
+
+    /* Category tabs */
+    .category-tabs { display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1.5rem; }
+    .cat-tab { padding:.4rem .9rem; border-radius:999px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.04); color:var(--gray-4); font-size:.8rem; font-weight:500; cursor:pointer; transition:all .2s; }
+    .cat-tab:hover { border-color:rgba(239,68,68,.4); color:#fff; }
+    .cat-tab.active { background:linear-gradient(135deg,var(--red),var(--rose)); border-color:transparent; color:#fff; }
+
+    /* Post list */
+    .post-list { display:flex; flex-direction:column; gap:.75rem; }
+    .post-card { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:.9rem; padding:1.1rem 1.25rem; display:flex; align-items:flex-start; gap:1rem; cursor:pointer; transition:border-color .2s,background .2s; text-decoration:none; color:inherit; }
+    .post-card:hover { border-color:rgba(239,68,68,.3); background:rgba(239,68,68,.04); }
+    .post-card.pinned { border-color:rgba(245,158,11,.25); }
+    .post-meta-left { flex:1; min-width:0; }
+    .post-title-row { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; margin-bottom:.3rem; }
+    .post-title { font-weight:600; font-size:1rem; color:#fff; }
+    .post-pin-icon { color:#fbbf24; font-size:.8rem; }
+    .post-lock-icon { color:var(--gray-4); font-size:.8rem; }
+    .post-excerpt { color:var(--gray-4); font-size:.85rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .post-footer { display:flex; align-items:center; gap:.75rem; margin-top:.5rem; flex-wrap:wrap; }
+    .post-author { font-size:.75rem; color:var(--gray-5); }
+    .post-date { font-size:.75rem; color:var(--gray-5); }
+    .post-replies { font-size:.75rem; color:var(--gray-4); display:flex; align-items:center; gap:.25rem; }
+    .post-cat-badge { font-size:.7rem; padding:.2rem .6rem; border-radius:999px; background:rgba(239,68,68,.12); color:var(--rose); border:1px solid rgba(239,68,68,.2); }
+
+    /* Empty state */
+    .empty-state { text-align:center; padding:4rem 2rem; color:var(--gray-5); }
+    .empty-state .empty-icon { font-size:3rem; margin-bottom:1rem; }
+    .empty-state p { font-size:.95rem; }
+
+    /* New post button */
+    .new-post-btn { display:inline-flex; align-items:center; gap:.5rem; padding:.6rem 1.2rem; background:linear-gradient(135deg,var(--red),var(--rose)); color:#fff; border:none; border-radius:.65rem; font-weight:600; font-size:.9rem; cursor:pointer; transition:opacity .2s,transform .2s; text-decoration:none; }
+    .new-post-btn:hover { opacity:.88; transform:scale(1.02); }
+    .new-post-btn:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+
+    /* Modal */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(4px); z-index:200; display:none; align-items:center; justify-content:center; padding:1rem; }
+    .modal-overlay.open { display:flex; }
+    .modal { background:#111118; border:1px solid rgba(255,255,255,.1); border-radius:1.1rem; padding:1.75rem; width:100%; max-width:560px; max-height:90vh; overflow-y:auto; }
+    .modal h2 { font-size:1.3rem; font-weight:700; margin-bottom:1.25rem; }
+    .form-group { margin-bottom:1rem; }
+    .form-group label { display:block; font-size:.85rem; color:var(--gray-3); margin-bottom:.4rem; }
+    .form-group input, .form-group textarea, .form-group select { width:100%; padding:.7rem .9rem; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:.6rem; color:#fff; font-size:.9rem; font-family:inherit; transition:border-color .2s; resize:vertical; }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline:none; border-color:rgba(239,68,68,.5); }
+    .form-group select option { background:#111118; }
+    .modal-actions { display:flex; gap:.75rem; justify-content:flex-end; margin-top:1.25rem; }
+    .btn-cancel { background:rgba(255,255,255,.07); color:#fff; border:1px solid rgba(255,255,255,.1); padding:.6rem 1.2rem; border-radius:.6rem; cursor:pointer; font-size:.9rem; font-weight:500; }
+    .btn-cancel:hover { background:rgba(255,255,255,.1); }
+    .btn-submit { background:linear-gradient(135deg,var(--red),var(--rose)); color:#fff; border:none; padding:.6rem 1.4rem; border-radius:.6rem; cursor:pointer; font-size:.9rem; font-weight:600; }
+    .btn-submit:disabled { opacity:.5; cursor:not-allowed; }
+
+    /* Post view */
+    .post-view { display:none; }
+    .post-view.open { display:block; }
+    .forum-list-view { }
+    .forum-list-view.hidden { display:none; }
+    .back-btn { display:inline-flex; align-items:center; gap:.5rem; color:var(--gray-4); font-size:.85rem; cursor:pointer; margin-bottom:1.5rem; background:none; border:none; padding:0; transition:color .2s; }
+    .back-btn:hover { color:#fff; }
+    .post-full { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:1rem; padding:1.5rem; margin-bottom:1.5rem; }
+    .post-full-title { font-size:1.5rem; font-weight:800; margin-bottom:.75rem; }
+    .post-full-meta { display:flex; align-items:center; gap:.75rem; flex-wrap:wrap; margin-bottom:1rem; color:var(--gray-4); font-size:.85rem; }
+    .post-full-content { color:var(--gray-3); line-height:1.7; white-space:pre-wrap; word-break:break-word; }
+    .post-mod-actions { display:flex; gap:.5rem; margin-top:1rem; flex-wrap:wrap; }
+    .mod-btn { padding:.35rem .8rem; border-radius:.5rem; font-size:.78rem; font-weight:500; cursor:pointer; border:none; transition:opacity .2s; }
+    .mod-btn-delete { background:rgba(239,68,68,.15); color:var(--red); border:1px solid rgba(239,68,68,.25); }
+    .mod-btn-delete:hover { background:rgba(239,68,68,.25); }
+    .mod-btn-lock { background:rgba(255,255,255,.07); color:var(--gray-3); border:1px solid rgba(255,255,255,.1); }
+    .mod-btn-lock:hover { background:rgba(255,255,255,.1); }
+    .mod-btn-pin { background:rgba(245,158,11,.12); color:#fbbf24; border:1px solid rgba(245,158,11,.2); }
+    .mod-btn-pin:hover { background:rgba(245,158,11,.2); }
+
+    /* Replies */
+    .replies-section h3 { font-size:1rem; font-weight:600; color:var(--gray-3); margin-bottom:1rem; }
+    .reply-card { background:rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-radius:.75rem; padding:1rem 1.1rem; margin-bottom:.75rem; }
+    .reply-meta { display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem; color:var(--gray-5); font-size:.8rem; }
+    .reply-author { color:var(--gray-3); font-weight:500; }
+    .reply-content { color:var(--gray-3); font-size:.9rem; line-height:1.6; white-space:pre-wrap; word-break:break-word; }
+    .reply-delete-btn { margin-left:auto; padding:.2rem .5rem; border-radius:.4rem; font-size:.72rem; background:rgba(239,68,68,.1); color:var(--red); border:1px solid rgba(239,68,68,.2); cursor:pointer; display:none; }
+
+    /* Reply form */
+    .reply-form { margin-top:1.5rem; }
+    .reply-form h4 { font-size:.9rem; font-weight:600; color:var(--gray-3); margin-bottom:.75rem; }
+    .reply-locked-msg { color:var(--gray-5); font-size:.85rem; text-align:center; padding:1rem; background:rgba(255,255,255,.03); border-radius:.65rem; border:1px solid rgba(255,255,255,.07); }
+
+    /* Login prompt */
+    .login-prompt { text-align:center; padding:2rem; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:1rem; color:var(--gray-4); font-size:.9rem; }
+    .login-prompt button { margin-top:.75rem; padding:.5rem 1.2rem; background:linear-gradient(135deg,var(--red),var(--rose)); color:#fff; border:none; border-radius:.6rem; cursor:pointer; font-weight:600; }
+
+    @media (max-width:600px) {
+      .forum-header { flex-direction:column; align-items:flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Nav -->
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">⚔️ <span>LUCKY</span>&nbsp;NATION</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="announcements.html">News</a></li>
+        <li><a href="rules.html">Rules</a></li>
+        <li><a href="how-to-join.html">Join</a></li>
+        <li><a href="forum.html" class="active">Forum</a></li>
+        <li><a href="staff.html">Staff</a></li>
+        <li><a href="vote.html">Vote</a></li>
+        <li><a href="store.html">Store</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+      </ul>
+      <a href="how-to-join.html" class="nav-join-btn">▶ Join Now</a>
+      <button class="nav-hamburger" id="navHamburger" onclick="toggleNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="ambient">
+    <div class="ambient-blob ambient-blob-top"></div>
+    <div class="ambient-blob ambient-blob-bottom"></div>
+  </div>
+
+  <div class="forum-layout">
+
+    <!-- List View -->
+    <div class="forum-list-view" id="listView">
+      <div class="forum-header">
+        <div>
+          <h1>💬 Community Forum</h1>
+          <p>Discuss, suggest, get help — all in one place.</p>
+        </div>
+        <div class="auth-bar">
+          <span class="user-info" id="userInfo"></span>
+          <button class="new-post-btn" id="newPostBtn" onclick="openNewPostModal()" disabled>+ New Post</button>
+          <button class="btn btn-secondary" id="authBtn" onclick="handleAuth()" style="padding:.5rem 1rem;font-size:.85rem;">Sign In</button>
+        </div>
+      </div>
+
+      <div class="category-tabs">
+        <button class="cat-tab active" onclick="filterCategory('all', this)">All</button>
+        <button class="cat-tab" onclick="filterCategory('general', this)">General</button>
+        <button class="cat-tab" onclick="filterCategory('announcements', this)">Announcements</button>
+        <button class="cat-tab" onclick="filterCategory('suggestions', this)">Suggestions</button>
+        <button class="cat-tab" onclick="filterCategory('help', this)">Help</button>
+        <button class="cat-tab" onclick="filterCategory('off-topic', this)">Off-Topic</button>
+      </div>
+
+      <div class="post-list" id="postList">
+        <div class="empty-state"><div class="empty-icon">📋</div><p>Loading posts…</p></div>
+      </div>
+    </div>
+
+    <!-- Post Detail View -->
+    <div class="post-view" id="postView">
+      <button class="back-btn" onclick="goBack()">← Back to Forum</button>
+      <div id="postDetail"></div>
+      <div class="replies-section">
+        <h3 id="repliesHeading">Replies</h3>
+        <div id="repliesList"></div>
+        <div id="replyFormArea"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Post Modal -->
+  <div class="modal-overlay" id="newPostModal">
+    <div class="modal">
+      <h2>Create New Post</h2>
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text" id="postTitleInput" placeholder="What's your post about?" maxlength="120" />
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="postCategoryInput">
+          <option value="general">General</option>
+          <option value="suggestions">Suggestions</option>
+          <option value="help">Help</option>
+          <option value="off-topic">Off-Topic</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Content</label>
+        <textarea id="postContentInput" rows="6" placeholder="Write your post here…"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeNewPostModal()">Cancel</button>
+        <button class="btn-submit" id="submitPostBtn" onclick="submitPost()">Post</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://6a03d91fcdf586eefe386b9c.base44.app/functions';
+    const AUTH_API = API_BASE + '/authApi';
+    const FORUM_API = API_BASE + '/forumApi';
+
+    let currentUser = null;
+    let currentClerkUser = null;
+    let currentCategory = 'all';
+    let currentPostId = null;
+    let clerk = null;
+
+    // ── Clerk init ──
+    window.addEventListener('load', async () => {
+      try {
+        await Clerk.load();
+        clerk = Clerk;
+        const cu = clerk.user;
+        if (cu) {
+          await syncUser(cu);
+        }
+        updateAuthUI();
+        loadPosts();
+      } catch (e) {
+        console.error('Clerk load error', e);
+        loadPosts();
+      }
+    });
+
+    async function syncUser(cu) {
+      currentClerkUser = cu;
+      try {
+        const res = await fetch(AUTH_API + '?action=login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            clerk_id: cu.id,
+            email: cu.primaryEmailAddress?.emailAddress || '',
+            full_name: cu.fullName || cu.firstName || ''
+          })
+        });
+        const data = await res.json();
+        if (data.user) currentUser = data.user;
+      } catch (e) {
+        console.error('syncUser error', e);
+      }
+    }
+
+    function updateAuthUI() {
+      const info = document.getElementById('userInfo');
+      const btn = document.getElementById('authBtn');
+      const newPostBtn = document.getElementById('newPostBtn');
+
+      if (currentClerkUser) {
+        info.textContent = currentClerkUser.firstName || currentClerkUser.primaryEmailAddress?.emailAddress || '';
+        btn.textContent = 'Sign Out';
+        if (currentUser && !currentUser.banned) newPostBtn.disabled = false;
+      } else {
+        info.textContent = '';
+        btn.textContent = 'Sign In';
+        newPostBtn.disabled = true;
+      }
+    }
+
+    async function handleAuth() {
+      if (currentClerkUser) {
+        await clerk.signOut();
+        currentUser = null;
+        currentClerkUser = null;
+        updateAuthUI();
+      } else {
+        clerk.openSignIn();
+      }
+    }
+
+    // ── Posts ──
+    async function loadPosts() {
+      const list = document.getElementById('postList');
+      list.innerHTML = '<div class="empty-state"><div class="empty-icon">⏳</div><p>Loading…</p></div>';
+      try {
+        const url = FORUM_API + '?action=list_posts' + (currentCategory !== 'all' ? '&category=' + currentCategory : '');
+        const res = await fetch(url);
+        const data = await res.json();
+        renderPostList(data.posts || []);
+      } catch (e) {
+        list.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Failed to load posts.</p></div>';
+      }
+    }
+
+    function renderPostList(posts) {
+      const list = document.getElementById('postList');
+      if (!posts.length) {
+        list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>No posts yet. Be the first to post!</p></div>';
+        return;
+      }
+      list.innerHTML = posts.map(p => `
+        <div class="post-card" onclick="openPost('${p.id}')">
+          <div class="post-meta-left">
+            <div class="post-title-row">
+              ${p.pinned ? '<span class="post-pin-icon">📌</span>' : ''}
+              ${p.locked ? '<span class="post-lock-icon">🔒</span>' : ''}
+              <span class="post-title">${escHtml(p.title)}</span>
+              <span class="post-cat-badge">${escHtml(p.category)}</span>
+            </div>
+            <div class="post-excerpt">${escHtml(p.content.substring(0, 120))}${p.content.length > 120 ? '…' : ''}</div>
+            <div class="post-footer">
+              <span class="post-author">by ${escHtml(p.author_name)}</span>
+              <span class="post-date">${timeAgo(p.created_date)}</span>
+              <span class="post-replies">💬 ${p.reply_count || 0}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterCategory(cat, btn) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      loadPosts();
+    }
+
+    // ── Post detail ──
+    async function openPost(id) {
+      currentPostId = id;
+      document.getElementById('listView').classList.add('hidden');
+      document.getElementById('postView').classList.add('open');
+      document.getElementById('postDetail').innerHTML = '<div class="empty-state"><p>Loading…</p></div>';
+      document.getElementById('repliesList').innerHTML = '';
+      document.getElementById('replyFormArea').innerHTML = '';
+
+      try {
+        const res = await fetch(FORUM_API + '?action=get_post&post_id=' + id);
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        renderPostDetail(data.post, data.replies || []);
+      } catch (e) {
+        document.getElementById('postDetail').innerHTML = '<div class="empty-state"><p>Failed to load post.</p></div>';
+      }
+    }
+
+    function renderPostDetail(post, replies) {
+      const isMod = currentUser && ['owner','moderator'].includes(currentUser.site_role);
+      const isOwner = currentUser && currentUser.site_role === 'owner';
+      const isAuthor = currentUser && currentUser.id === post.author_id;
+
+      document.getElementById('postDetail').innerHTML = `
+        <div class="post-full">
+          <div class="post-full-title">
+            ${post.pinned ? '📌 ' : ''}${post.locked ? '🔒 ' : ''}${escHtml(post.title)}
+          </div>
+          <div class="post-full-meta">
+            <span class="post-cat-badge">${escHtml(post.category)}</span>
+            <span>by ${escHtml(post.author_name)}</span>
+            <span>${timeAgo(post.created_date)}</span>
+          </div>
+          <div class="post-full-content">${escHtml(post.content)}</div>
+          ${(isMod || isAuthor) ? `
+          <div class="post-mod-actions">
+            ${(isMod || isAuthor) ? `<button class="mod-btn mod-btn-delete" onclick="deletePost('${post.id}')">🗑 Delete</button>` : ''}
+            ${isMod ? `<button class="mod-btn mod-btn-lock" onclick="toggleLock('${post.id}', ${!post.locked})">${post.locked ? '🔓 Unlock' : '🔒 Lock'}</button>` : ''}
+            ${isOwner ? `<button class="mod-btn mod-btn-pin" onclick="togglePin('${post.id}', ${!post.pinned})">${post.pinned ? '📌 Unpin' : '📌 Pin'}</button>` : ''}
+          </div>` : ''}
+        </div>
+      `;
+
+      const repliesList = document.getElementById('repliesList');
+      document.getElementById('repliesHeading').textContent = `Replies (${replies.length})`;
+      if (replies.length === 0) {
+        repliesList.innerHTML = '<p style="color:var(--gray-5);font-size:.85rem;margin-bottom:1rem;">No replies yet.</p>';
+      } else {
+        repliesList.innerHTML = replies.map(r => {
+          const canDel = currentUser && (['owner','moderator'].includes(currentUser.site_role) || currentUser.id === r.author_id);
+          return `
+          <div class="reply-card" id="reply-${r.id}">
+            <div class="reply-meta">
+              <span class="reply-author">${escHtml(r.author_name)}</span>
+              <span>${timeAgo(r.created_date)}</span>
+              ${canDel ? `<button class="reply-delete-btn" style="display:inline-block" onclick="deleteReply('${r.id}')">🗑</button>` : ''}
+            </div>
+            <div class="reply-content">${escHtml(r.content)}</div>
+          </div>`;
+        }).join('');
+      }
+
+      const replyArea = document.getElementById('replyFormArea');
+      if (!currentClerkUser) {
+        replyArea.innerHTML = `<div class="login-prompt"><p>Sign in to reply to this post.</p><button onclick="handleAuth()">Sign In</button></div>`;
+      } else if (post.locked && !isMod) {
+        replyArea.innerHTML = `<div class="reply-locked-msg">🔒 This thread is locked.</div>`;
+      } else if (currentUser?.banned) {
+        replyArea.innerHTML = `<div class="reply-locked-msg">You are banned from the forum.</div>`;
+      } else {
+        replyArea.innerHTML = `
+          <div class="reply-form">
+            <h4>Leave a Reply</h4>
+            <div class="form-group">
+              <textarea id="replyContent" rows="4" placeholder="Write your reply…"></textarea>
+            </div>
+            <button class="btn-submit" onclick="submitReply('${post.id}')">Post Reply</button>
+          </div>
+        `;
+      }
+    }
+
+    function goBack() {
+      currentPostId = null;
+      document.getElementById('listView').classList.remove('hidden');
+      document.getElementById('postView').classList.remove('open');
+      loadPosts();
+    }
+
+    // ── New post modal ──
+    function openNewPostModal() {
+      if (!currentUser) return;
+      document.getElementById('newPostModal').classList.add('open');
+    }
+    function closeNewPostModal() {
+      document.getElementById('newPostModal').classList.remove('open');
+    }
+
+    async function submitPost() {
+      const title = document.getElementById('postTitleInput').value.trim();
+      const content = document.getElementById('postContentInput').value.trim();
+      const category = document.getElementById('postCategoryInput').value;
+      const btn = document.getElementById('submitPostBtn');
+
+      if (!title || !content) return alert('Title and content are required.');
+      btn.disabled = true;
+      btn.textContent = 'Posting…';
+
+      try {
+        const res = await fetch(FORUM_API + '?action=create_post', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ clerk_id: currentClerkUser.id, title, content, category })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        closeNewPostModal();
+        document.getElementById('postTitleInput').value = '';
+        document.getElementById('postContentInput').value = '';
+        openPost(data.post.id);
+      } catch (e) {
+        alert('Error: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Post';
+      }
+    }
+
+    async function submitReply(postId) {
+      const content = document.getElementById('replyContent').value.trim();
+      if (!content) return;
+
+      try {
+        const res = await fetch(FORUM_API + '?action=create_reply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ clerk_id: currentClerkUser.id, post_id: postId, content })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        openPost(postId); // refresh
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    // ── Mod actions ──
+    async function deletePost(postId) {
+      if (!confirm('Delete this post?')) return;
+      try {
+        const res = await fetch(FORUM_API + '?action=delete_post&caller_clerk_id=' + currentClerkUser.id + '&post_id=' + postId, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        goBack();
+      } catch (e) { alert('Error: ' + e.message); }
+    }
+
+    async function deleteReply(replyId) {
+      if (!confirm('Delete this reply?')) return;
+      try {
+        const res = await fetch(FORUM_API + '?action=delete_reply&caller_clerk_id=' + currentClerkUser.id + '&reply_id=' + replyId, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        openPost(currentPostId);
+      } catch (e) { alert('Error: ' + e.message); }
+    }
+
+    async function toggleLock(postId, locked) {
+      try {
+        const res = await fetch(FORUM_API + '?action=lock_post', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ clerk_id: currentClerkUser.id, post_id: postId, locked })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        openPost(postId);
+      } catch (e) { alert('Error: ' + e.message); }
+    }
+
+    async function togglePin(postId, pinned) {
+      try {
+        const res = await fetch(FORUM_API + '?action=pin_post', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ clerk_id: currentClerkUser.id, post_id: postId, pinned })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        openPost(postId);
+      } catch (e) { alert('Error: ' + e.message); }
+    }
+
+    // ── Utils ──
+    function escHtml(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function timeAgo(dateStr) {
+      const diff = Date.now() - new Date(dateStr).getTime();
+      const m = Math.floor(diff / 60000);
+      if (m < 1) return 'just now';
+      if (m < 60) return m + 'm ago';
+      const h = Math.floor(m / 60);
+      if (h < 24) return h + 'h ago';
+      const d = Math.floor(h / 24);
+      if (d < 30) return d + 'd ago';
+      return new Date(dateStr).toLocaleDateString();
+    }
+
+    function toggleNav() {
+      document.getElementById('navLinks').classList.toggle('open');
+      document.getElementById('navHamburger').classList.toggle('open');
+    }
+  </script>
+</body>
+</html>
