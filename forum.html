@@ -351,7 +351,42 @@
       goBack();
       loadPosts();
     }
+async function submitPost() {
+      const title = document.getElementById('postTitleInput').value;
+      const content = document.getElementById('postContentInput').value;
+      const category = document.getElementById('postCategoryInput').value;
+      const btn = document.getElementById('submitPostBtn');
 
+      if(!title || !content) return alert("Please fill out all fields.");
+      btn.disabled = true;
+      btn.textContent = "Posting...";
+
+      try {
+        const res = await fetch(`${FORUM_API}?action=create_post`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            author: currentUser.username,
+            role: currentUser.role,
+            title,
+            content,
+            category
+          })
+        });
+
+        if (res.ok) {
+          document.getElementById('postTitleInput').value = '';
+          document.getElementById('postContentInput').value = '';
+          closeNewPostModal();
+          loadPosts();
+        }
+      } catch (e) {
+        alert("Error posting.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Post";
+      }
+    }
     function escHtml(str) { return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
     function timeAgo(d) { return new Date(d).toLocaleDateString(); } 
     function openNewPostModal() { document.getElementById('newPostModal').classList.add('open'); }
