@@ -6,7 +6,7 @@
   <title>Admin Panel – Lucky Nation</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="stylesheet" href="style.css" />
-  <script async crossorigin="anonymous" data-clerk-publishable-key="pk_test_cHJlbWl1bS1ob3VuZC0xMy5jbGVyay5hY2NvdW50cy5kZXYk" src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
   <style>
     .admin-layout { position:relative; z-index:1; max-width:960px; margin:0 auto; padding:2rem 1.25rem 5rem; }
     .admin-header { margin-bottom:2rem; }
@@ -96,6 +96,7 @@
 
     window.addEventListener('load', async () => {
       try {
+        const clerk = new Clerk('pk_test_cHJlbWl1bS1ob3VuZC0xMy5jbGVyay5hY2NvdW50cy5kZXYk');
         await Clerk.load();
         const cu = Clerk.user;
         if (!cu) { showAccessDenied('not_signed_in'); return; }
