@@ -301,6 +301,7 @@
               <span class="post-cat-badge">${p.category}</span>
             </div>
             <div class="post-footer">
+              <img src="${p.authorPfp}" class="post-avatar">
               <span class="post-author">by ${p.author}</span>
               <span class="post-date">${timeAgo(p.created_at)}</span>
               <span class="post-replies">💬 ${(p.replies || []).length}</span>
