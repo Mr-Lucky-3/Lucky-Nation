@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Account – Lucky Nation</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .account-card { max-width: 500px; margin: 50px auto; background: #111; padding: 30px; border-radius: 12px; border: 1px solid #333; text-align: center; }
+        .profile-edit-img { width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--red); margin-bottom: 20px; }
+        .danger-zone { margin-top: 40px; border-top: 1px solid #333; padding-top: 20px; }
+        .btn-logout { background: #444; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="account-card">
+        <h1>My Account</h1>
+        <img id="currentPfp" src="" class="profile-edit-img">
+        <h2 id="displayUsername">---</h2>
+        
+        <div style="margin: 20px 0;">
+            <label>Profile Picture URL</label><br>
+            <input type="text" id="pfpInput" placeholder="Paste image URL here..." style="width: 80%; padding: 8px; margin-top: 5px;">
+            <button onclick="savePfp()" class="btn-mod" style="margin-top: 10px;">Save Picture</button>
+        </div>
+
+        <button onclick="logout()" class="btn-logout">Logout</button>
+
+        <div class="danger-zone">
+            <h3>Danger Zone</h3>
+            <p style="font-size: 0.8rem; color: #888;">Deleting your account is permanent.</p>
+            <button onclick="deleteSelf()" class="btn-delete">Delete My Account</button>
+        </div>
+    </div>
+
+    <script>
+        const AUTH_API = 'https://eocfyx3v7zr8kvf.m.pipedream.net';
+        const user = JSON.parse(localStorage.getItem('luckyUser'));
+
+        if (!user) window.location.href = 'login.html';
+
+        document.getElementById('displayUsername').innerText = user.username;
+        document.getElementById('currentPfp').src = user.pfp || 'default-avatar.png';
+        document.getElementById('pfpInput').value = user.pfp || '';
+
+        async function savePfp() {
+          const newUrl = document.getElementById('pfpInput').value;
+          
+          const res = await fetch(`${AUTH_API}?action=save_pfp`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ 
+                  username: user.username, 
+                  pfpUrl: newUrl 
+              })
+          });
+      
+          if (res.ok) {
+              // Update the local storage so the navbar updates immediately
+              user.pfp = newUrl;
+              localStorage.setItem('luckyUser', JSON.stringify(user));
+              document.getElementById('currentPfp').src = newUrl;
+              alert("Profile picture updated successfully!");
+          }
+      }
+
+        function logout() {
+            localStorage.removeItem('luckyUser');
+            window.location.href = 'index.html';
+        }
+
+        async function deleteSelf() {
+            if (!confirm("Are you sure? This will wipe your account from Lucky Nation forever.")) return;
+            
+            await fetch(`${AUTH_API}?action=delete_account`, {
+                method: 'POST',
+                body: JSON.stringify({ targetUsername: user.username })
+            });
+            
+            logout();
+        }
+    </script>
+</body>
+</html>
