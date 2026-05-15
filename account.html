@@ -18,10 +18,60 @@
         <h2 id="displayUsername">---</h2>
         
         <div style="margin: 20px 0;">
-            <label>Profile Picture URL</label><br>
-            <input type="text" id="pfpInput" placeholder="Paste image URL here..." style="width: 80%; padding: 8px; margin-top: 5px;">
-            <button onclick="savePfp()" class="btn-mod" style="margin-top: 10px;">Save Picture</button>
+            <label class="custom-file-upload">
+                <input type="file" id="pfpFile" accept="image/*" style="display:none;">
+                <span>📁 Choose New Image</span>
+            </label>
+            <button onclick="uploadImage()" id="uploadBtn" class="btn-mod">Upload & Save</button>
         </div>
+        
+        <script>
+        async function uploadImage() {
+            const fileInput = document.getElementById('pfpFile');
+            const uploadBtn = document.getElementById('uploadBtn');
+            
+            if (!fileInput.files[0]) return alert("Please select a file first!");
+        
+            uploadBtn.innerText = "Uploading...";
+            uploadBtn.disabled = true;
+        
+            // 1. Prepare the image for ImgBB
+            const formData = new FormData();
+            formData.append("image", fileInput.files[0]);
+        
+            try {
+                // 2. Upload to ImgBB (Replace YOUR_API_KEY)
+                const imgbbRes = await fetch("https://api.imgbb.com/1/upload?key=b9f61feec807e466d82c1e62b0c26699", {
+                    method: "POST",
+                    body: formData
+                });
+                const imgbbData = await imgbbRes.json();
+                const newUrl = imgbbData.data.url;
+        
+                // 3. Save that URL to your Pipedream database
+                const saveRes = await fetch(`${AUTH_API}?action=save_pfp`, {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        username: user.username, 
+                        pfpUrl: newUrl 
+                    })
+                });
+        
+                if (saveRes.ok) {
+                    user.pfp = newUrl;
+                    localStorage.setItem('luckyUser', JSON.stringify(user));
+                    document.getElementById('currentPfp').src = newUrl;
+                    alert("Avatar Updated!");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Upload failed. Try a smaller image?");
+            } finally {
+                uploadBtn.innerText = "Upload & Save";
+                uploadBtn.disabled = false;
+            }
+        }
+        </script>
 
         <button onclick="logout()" class="btn-logout">Logout</button>
 
