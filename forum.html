@@ -203,6 +203,9 @@
       </div>
     </div>
   </div>
+  <div id="sign-in-modal">
+    
+  </div>
 
   <script>
     const API_BASE = 'https://6a03d91fcdf586eefe386b9c.base44.app/functions';
@@ -273,8 +276,9 @@
         currentUser = null;
         currentClerkUser = null;
         updateAuthUI();
-      } else {
-        clerk.openSignIn();
+      } else 
+        const signInDiv = document.getElementById('sign-in-modal');
+        clerk.mountSignIn(signInDiv);
       }
     }
 
