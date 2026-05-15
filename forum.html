@@ -195,7 +195,7 @@
       loadPosts();
     });
 
-    // --- PIPEDREAM AUTH ---
+    // --- AUTH LOGIC ---
     async function handleAuth() {
       if (currentUser) {
         localStorage.removeItem('luckyUser');
@@ -204,21 +204,19 @@
       } else {
         const username = prompt("Enter your Lucky Nation Username:");
         if (!username) return;
-
         try {
           const res = await fetch(`${AUTH_API}?username=${encodeURIComponent(username)}`);
           const data = await res.json();
-          
           if (data.user) {
             currentUser = data.user;
             localStorage.setItem('luckyUser', JSON.stringify(data.user));
             updateAuthUI();
             alert(`Welcome back, ${currentUser.username}!`);
           } else {
-            alert("User not found. Check Pipedream Data Store.");
+            alert("User not found.");
           }
         } catch (e) {
-          alert("Auth Server Error. Check Pipedream logs.");
+          alert("Auth Server Error.");
         }
       }
     }
@@ -227,7 +225,6 @@
       const info = document.getElementById('userInfo');
       const btn = document.getElementById('authBtn');
       const newPostBtn = document.getElementById('newPostBtn');
-
       if (currentUser) {
         info.textContent = `${currentUser.username} (${currentUser.role})`;
         btn.textContent = 'Sign Out';
@@ -239,6 +236,45 @@
       }
     }
 
+    // --- POSTING LOGIC ---
+    async function submitPost() {
+      const title = document.getElementById('postTitleInput').value;
+      const content = document.getElementById('postContentInput').value;
+      const category = document.getElementById('postCategoryInput').value;
+      const btn = document.getElementById('submitPostBtn');
+
+      if(!title || !content) return alert("Please fill out all fields.");
+      btn.disabled = true;
+      btn.textContent = "Posting...";
+
+      try {
+        const res = await fetch(`${FORUM_API}?action=create_post`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            author: currentUser.username,
+            role: currentUser.role,
+            title,
+            content,
+            category
+          })
+        });
+
+        if (res.ok) {
+          document.getElementById('postTitleInput').value = '';
+          document.getElementById('postContentInput').value = '';
+          closeNewPostModal();
+          loadPosts();
+        }
+      } catch (e) {
+        alert("Error posting.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Post";
+      }
+    }
+
+    // --- LOADING & RENDERING ---
     async function loadPosts() {
       const list = document.getElementById('postList');
       list.innerHTML = '<p>Loading posts...</p>';
@@ -247,7 +283,7 @@
         const data = await res.json();
         renderPostList(data.posts || []);
       } catch (e) {
-        list.innerHTML = '<p>Error connecting to Pipedream.</p>';
+        list.innerHTML = '<p>Error loading posts.</p>';
       }
     }
 
@@ -285,7 +321,6 @@
 
       if (!post) return;
 
-      // Show Post Details
       const isStaff = currentUser && (currentUser.role === 'owner' || currentUser.role === 'moderator');
       document.getElementById('postDetail').innerHTML = `
         <div class="post-full">
@@ -295,22 +330,19 @@
             <span>by <b>${post.author}</b></span>
             <span>• ${timeAgo(post.created_at)}</span>
           </div>
-          <div class="post-full-content">${escHtml(post.content)}</div>
+          <div class="post-full-content" style="margin: 20px 0;">${escHtml(post.content)}</div>
           ${isStaff ? `<div class="post-mod-actions"><button class="mod-btn mod-btn-delete" onclick="deletePost('${post.id}')">Delete Post</button></div>` : ''}
         </div>
       `;
-
-      // Render Replies
       renderReplies(post.replies || []);
     }
 
     function renderReplies(replies) {
       const list = document.getElementById('repliesList');
       const formArea = document.getElementById('replyFormArea');
-      
       list.innerHTML = replies.map(r => `
         <div class="reply-card">
-          <div class="reply-meta"><span class="reply-author">${r.author} (${r.role})</span> • ${timeAgo(r.created_at)}</div>
+          <div class="reply-meta"><span class="reply-author">${r.author}</span> • ${timeAgo(r.created_at)}</div>
           <div class="reply-content">${escHtml(r.content)}</div>
         </div>
       `).join('');
@@ -318,31 +350,25 @@
       formArea.innerHTML = currentUser ? `
         <div class="reply-form">
           <h4>Leave a Reply</h4>
-          <textarea id="replyInput" rows="3" placeholder="Be nice!"></textarea>
-          <button class="btn-submit" onclick="submitReply()">Post Reply</button>
+          <textarea id="replyInput" rows="3" style="width:100%; padding:10px; border-radius:5px; background:#222; color:white; border:1px solid #444;"></textarea>
+          <button class="btn-submit" style="margin-top:10px;" onclick="submitReply()">Post Reply</button>
         </div>
-      ` : '<p class="login-prompt">Sign in to join the discussion.</p>';
+      ` : '<p class="login-prompt">Please sign in to reply.</p>';
     }
 
     async function submitReply() {
       const content = document.getElementById('replyInput').value;
       if (!content) return;
-
       await fetch(`${FORUM_API}?action=add_reply`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          postId: currentPostId,
-          author: currentUser.username,
-          role: currentUser.role,
-          content: content
-        })
+        body: JSON.stringify({ postId: currentPostId, author: currentUser.username, role: currentUser.role, content })
       });
-      openPost(currentPostId); // Refresh view
+      openPost(currentPostId);
     }
 
     async function deletePost(id) {
-      if (!confirm("Delete this post forever?")) return;
+      if (!confirm("Delete this post?")) return;
       await fetch(`${FORUM_API}?action=delete_post&post_id=${id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -351,50 +377,15 @@
       goBack();
       loadPosts();
     }
-async function submitPost() {
-      const title = document.getElementById('postTitleInput').value;
-      const content = document.getElementById('postContentInput').value;
-      const category = document.getElementById('postCategoryInput').value;
-      const btn = document.getElementById('submitPostBtn');
 
-      if(!title || !content) return alert("Please fill out all fields.");
-      btn.disabled = true;
-      btn.textContent = "Posting...";
-
-      try {
-        const res = await fetch(`${FORUM_API}?action=create_post`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            author: currentUser.username,
-            role: currentUser.role,
-            title,
-            content,
-            category
-          })
-        });
-
-        if (res.ok) {
-          document.getElementById('postTitleInput').value = '';
-          document.getElementById('postContentInput').value = '';
-          closeNewPostModal();
-          loadPosts();
-        }
-      } catch (e) {
-        alert("Error posting.");
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Post";
-      }
-    }
     function escHtml(str) { return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-    function timeAgo(d) { return new Date(d).toLocaleDateString(); } 
+    function timeAgo(d) { return new Date(d).toLocaleDateString(); }
     function openNewPostModal() { document.getElementById('newPostModal').classList.add('open'); }
     function closeNewPostModal() { document.getElementById('newPostModal').classList.remove('open'); }
     function goBack() { 
       document.getElementById('postView').classList.remove('open'); 
       document.getElementById('listView').classList.remove('hidden'); 
-    }  
+    }
   </script>
 </body>
 </html>
