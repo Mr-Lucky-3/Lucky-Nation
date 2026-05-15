@@ -30,7 +30,7 @@
         <li><a href="faq.html">FAQ</a></li>
         <li><a href="leaderboards.html">Leaderboards</a></li>
       </ul>
-      <a href="how-to-join.html" class="nav-join-btn">&#9654; Join Now</a>
+      <a href="how-to-join.html" class="nav-join-btn" id="navActionBtn">&#9654; Join Now</a>
       <button class="nav-hamburger" id="navHamburger" onclick="toggleNav()" aria-label="Menu">
         <span></span><span></span><span></span>
       </button>
@@ -120,6 +120,26 @@ tbl('lb-money-c',[{n:'MrLucky3',v:'$2,450,000'},{n:'Steve',v:'$1,200,000'},{n:'N
 tbl('lb-kills-c',[{n:'PvPGod',v:'4,201'},{n:'BladeRunner',v:'3,550'},{n:'StealthArcher',v:'2,890'},{n:'MrLucky3',v:'2,100'},{n:'CombatAce',v:'1,750'},{n:'SwordMaster',v:'1,320'},{n:'ArenaKing',v:'987'},{n:'Herobrine',v:'876'},{n:'SniperElite',v:'765'},{n:'WarriorX',v:'654'}],'PvP Kills');
 tbl('lb-playtime-c',[{n:'MrLucky3',v:'1,204 hrs'},{n:'Steve',v:'892 hrs'},{n:'FarmMaster',v:'750 hrs'},{n:'BuilderBob',v:'680 hrs'},{n:'SurvivalPro',v:'610 hrs'},{n:'DiamondHunter',v:'540 hrs'},{n:'CreeperKing',v:'482 hrs'},{n:'Alex',v:'401 hrs'},{n:'Notch',v:'389 hrs'},{n:'Herobrine',v:'310 hrs'}],'Playtime');
 tbl('lb-votes-c',[{n:'VotingLegend',v:'312'},{n:'MrLucky3',v:'285'},{n:'SupporterPro',v:'240'},{n:'LoyalPlayer',v:'198'},{n:'Alex',v:'175'},{n:'Steve',v:'152'},{n:'DailyVoter',v:'131'},{n:'CreeperKing',v:'110'},{n:'BuilderBob',v:'98'},{n:'SurvivalPro',v:'87'}],'Votes');
+</script>
+  <script>
+(function updateDynamicNav() {
+    const user = JSON.parse(localStorage.getItem('luckyUser'));
+    const navBtn = document.getElementById('navActionBtn');
+
+    if (user && user.username) {
+        // If logged in: Show username and link to account page
+        navBtn.innerText = `👤 ${user.username}`;
+        navBtn.href = "account.html";
+        
+        // Optional: If you want it to look slightly different when it's a profile link
+        navBtn.style.background = "rgba(255,255,255,0.1)";
+        navBtn.style.border = "1px solid var(--red)";
+    } else {
+        // If NOT logged in: Show Login and link to login page
+        navBtn.innerText = "🔑 Login";
+        navBtn.href = "login.html";
+    }
+})();
 </script>
 </body>
 </html>
