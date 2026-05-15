@@ -77,16 +77,53 @@
     }
 
     async function loadAdminData() {
-      // 1. Load Stats and Users
       const userRes = await fetch(`${AUTH_API}?action=list_users`);
       const userData = await userRes.json();
+      
       document.getElementById('userCount').innerText = userData.users.length;
+      
+      // Render the table with buttons
       document.getElementById('userList').innerHTML = userData.users.map(u => `
         <tr>
             <td>${u.username}</td>
             <td><span class="role-badge role-${u.role}">${u.role}</span></td>
+            <td>
+                <!-- Promote/Demote Buttons -->
+                ${u.role === 'member' ? 
+                    `<button onclick="updateRole('${u.username}', 'moderator')" class="btn-mod">Promote to Mod</button>` : 
+                    `<button onclick="updateRole('${u.username}', 'member')" class="btn-demote">Demote to Member</button>`
+                }
+                <!-- Delete Button (Don't let owner delete themselves!) -->
+                ${u.username !== currentUser.username ? 
+                    `<button onclick="deleteAccount('${u.username}')" class="btn-delete">Delete Account</button>` : 
+                    ''
+                }
+            </td>
         </tr>
       `).join('');
+    }
+
+    // --- ACTION FUNCTIONS ---
+
+    async function updateRole(targetUsername, newRole) {
+        if(!confirm(`Change ${targetUsername} to ${newRole}?`)) return;
+        await fetch(`${AUTH_API}?action=set_role`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ targetUsername, newRole })
+        });
+        loadAdminData(); // Refresh list
+    }
+
+    async function deleteAccount(targetUsername) {
+        if(!confirm(`PERMANENTLY delete ${targetUsername}? This cannot be undone.`)) return;
+        await fetch(`${AUTH_API}?action=delete_account`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ targetUsername })
+        });
+        loadAdminData(); // Refresh list
+    }
 
       // 2. Load Posts
       const postRes = await fetch(`${FORUM_API}?action=list_posts`);
