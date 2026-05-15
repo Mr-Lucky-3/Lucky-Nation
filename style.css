@@ -268,3 +268,22 @@ body { background:var(--bg); color:#fff; font-family:-apple-system,BlinkMacSyste
 .ann-empty  { text-align:center; padding:4rem 1rem; color:var(--gray-5); }
 /* RESPONSIVE */
 @media (max-width:480px) { .join-tabs{flex-direction:column;} .player-stats{grid-template-columns:repeat(2,1fr);} .lb-tabs{flex-direction:column;} }
+.post-sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80px;
+    gap: 5px;
+}
+.post-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px; /* Square with rounded corners looks very Minecraft */
+    border: 2px solid #333;
+    object-fit: cover;
+}
+.post-author {
+    font-size: 0.75rem;
+    color: var(--red);
+    font-weight: bold;
+}
