@@ -6,16 +6,24 @@
   <title>Admin Panel – Lucky Nation</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Reuse your existing styles here */
     .admin-layout { max-width:960px; margin:0 auto; padding:2rem 1.25rem; }
     .role-badge { padding:.2rem .6rem; border-radius:999px; font-size:.7rem; font-weight:bold; text-transform:uppercase; }
     .role-owner { background:rgba(239,68,68,.1); color:#ef4444; border:1px solid #ef4444; }
+    .role-moderator { background:rgba(59,130,246,.1); color:#3b82f6; border:1px solid #3b82f6; }
     .role-member { background:rgba(255,255,255,.1); color:#ccc; }
+    
     .users-table { width:100%; border-collapse:collapse; margin-top:1rem; }
     .users-table th { text-align:left; border-bottom:1px solid #333; padding:10px; color:#888; font-size:.8rem; }
     .users-table td { padding:12px 10px; border-bottom:1px solid #222; }
+    
     .stat-card { background:#111; border:1px solid #333; padding:20px; border-radius:10px; text-align:center; }
     .stat-number { font-size:1.8rem; font-weight:bold; color:var(--red); }
+
+    /* Admin Action Buttons */
+    .btn-mod { background: #3b82f6; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-right: 5px; transition: 0.2s; }
+    .btn-demote { background: #fbbf24; color: #000; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-right: 5px; transition: 0.2s; }
+    .btn-delete { background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; transition: 0.2s; }
+    .btn-mod:hover, .btn-demote:hover, .btn-delete:hover { filter: brightness(1.2); }
   </style>
 </head>
 <body>
@@ -31,7 +39,8 @@
   </nav>
 
   <div class="admin-layout" id="adminContent">
-    </div>
+    <!-- Screen will be populated by JS -->
+  </div>
 
   <script>
     const AUTH_API = 'https://eocfyx3v7zr8kvf.m.pipedream.net';
@@ -40,6 +49,7 @@
     const currentUser = JSON.parse(localStorage.getItem('luckyUser'));
 
     window.addEventListener('load', () => {
+      // Security Check: Only Owner or Mod can see this
       if (!currentUser || (currentUser.role !== 'owner' && currentUser.role !== 'moderator')) {
         document.getElementById('adminContent').innerHTML = `
           <div style="text-align:center; padding:5rem;">
@@ -52,11 +62,11 @@
       renderAdminPanel();
     });
 
-    async function renderAdminPanel() {
+    function renderAdminPanel() {
       const container = document.getElementById('adminContent');
       container.innerHTML = `
         <h1>⚙️ Admin Panel</h1>
-        <p>Logged in as: <b>${currentUser.username}</b></p>
+        <p>Logged in as: <b>${currentUser.username}</b> (${currentUser.role})</p>
         
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin:20px 0;">
             <div class="stat-card"><div class="stat-number" id="userCount">-</div><div class="stat-label">Total Users</div></div>
@@ -65,8 +75,14 @@
 
         <h3>Registered Users</h3>
         <table class="users-table">
-          <thead><tr><th>Username</th><th>Role</th></tr></thead>
-          <tbody id="userList"><tr><td>Loading...</td></tr></tbody>
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Role</th>
+              <th style="text-align:right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userList"><tr><td colspan="3">Loading users...</td></tr></tbody>
         </table>
 
         <h3 style="margin-top:30px">Forum Moderation</h3>
@@ -77,74 +93,71 @@
     }
 
     async function loadAdminData() {
-      const userRes = await fetch(`${AUTH_API}?action=list_users`);
-      const userData = await userRes.json();
-      
-      document.getElementById('userCount').innerText = userData.users.length;
-      
-      // Render the table with buttons
-      document.getElementById('userList').innerHTML = userData.users.map(u => `
-        <tr>
-            <td>${u.username}</td>
-            <td><span class="role-badge role-${u.role}">${u.role}</span></td>
-            <td>
-                <!-- Promote/Demote Buttons -->
-                ${u.role === 'member' ? 
-                    `<button onclick="updateRole('${u.username}', 'moderator')" class="btn-mod">Promote to Mod</button>` : 
-                    `<button onclick="updateRole('${u.username}', 'member')" class="btn-demote">Demote to Member</button>`
-                }
-                <!-- Delete Button (Don't let owner delete themselves!) -->
-                ${u.username !== currentUser.username ? 
-                    `<button onclick="deleteAccount('${u.username}')" class="btn-delete">Delete Account</button>` : 
-                    ''
-                }
-            </td>
-        </tr>
-      `).join('');
+      try {
+        // 1. Fetch Users
+        const userRes = await fetch(`${AUTH_API}?action=list_users`);
+        const userData = await userRes.json();
+        document.getElementById('userCount').innerText = userData.users.length;
+        
+        document.getElementById('userList').innerHTML = userData.users.map(u => `
+          <tr>
+              <td>${u.username}</td>
+              <td><span class="role-badge role-${u.role}">${u.role}</span></td>
+              <td style="text-align:right">
+                  ${u.role === 'member' ? 
+                      `<button onclick="updateRole('${u.username}', 'moderator')" class="btn-mod">Promote</button>` : 
+                      (u.role === 'moderator' ? `<button onclick="updateRole('${u.username}', 'member')" class="btn-demote">Demote</button>` : '')
+                  }
+                  ${u.username !== currentUser.username && u.role !== 'owner' ? 
+                      `<button onclick="deleteAccount('${u.username}')" class="btn-delete">Delete</button>` : 
+                      ''
+                  }
+              </td>
+          </tr>
+        `).join('');
+
+        // 2. Fetch Posts
+        const postRes = await fetch(`${FORUM_API}?action=list_posts`);
+        const postData = await postRes.json();
+        document.getElementById('postCount').innerText = postData.posts.length;
+        document.getElementById('modPostList').innerHTML = postData.posts.map(p => `
+          <div style="background:#111; border:1px solid #222; padding:15px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                  <b>${p.title}</b><br>
+                  <small style="color:#666">by ${p.author}</small>
+              </div>
+              <button onclick="deletePost('${p.id}')" class="btn-delete">Delete Post</button>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error("Failed to load admin data:", err);
+      }
     }
 
-    // --- ACTION FUNCTIONS ---
+    // --- Pipedream API Calls ---
 
     async function updateRole(targetUsername, newRole) {
         if(!confirm(`Change ${targetUsername} to ${newRole}?`)) return;
         await fetch(`${AUTH_API}?action=set_role`, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ targetUsername, newRole })
         });
-        loadAdminData(); // Refresh list
+        loadAdminData();
     }
 
     async function deleteAccount(targetUsername) {
-        if(!confirm(`PERMANENTLY delete ${targetUsername}? This cannot be undone.`)) return;
+        if(!confirm(`Permanently delete user "${targetUsername}"?`)) return;
         await fetch(`${AUTH_API}?action=delete_account`, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ targetUsername })
         });
-        loadAdminData(); // Refresh list
-    }
-
-      // 2. Load Posts
-      const postRes = await fetch(`${FORUM_API}?action=list_posts`);
-      const postData = await postRes.json();
-      document.getElementById('postCount').innerText = postData.posts.length;
-      document.getElementById('modPostList').innerHTML = postData.posts.map(p => `
-        <div style="background:#111; padding:15px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-            <div>
-                <b>${p.title}</b><br>
-                <small>by ${p.author}</small>
-            </div>
-            <button onclick="deletePost('${p.id}')" style="background:#ef4444; border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;">Delete</button>
-        </div>
-      `).join('');
+        loadAdminData();
     }
 
     async function deletePost(id) {
-        if(!confirm("Delete this post?")) return;
+        if(!confirm("Delete this forum post?")) return;
         await fetch(`${FORUM_API}?action=delete_post&post_id=${id}`, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ role: currentUser.role })
         });
         loadAdminData();
