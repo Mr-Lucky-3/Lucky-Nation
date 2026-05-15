@@ -4,368 +4,113 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Panel – Lucky Nation</title>
-  <meta name="robots" content="noindex, nofollow" />
   <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
   <style>
-    .admin-layout { position:relative; z-index:1; max-width:960px; margin:0 auto; padding:2rem 1.25rem 5rem; }
-    .admin-header { margin-bottom:2rem; }
-    .admin-header h1 { font-size:1.8rem; font-weight:800; display:flex; align-items:center; gap:.5rem; }
-    .admin-header p { color:var(--gray-4); font-size:.9rem; margin-top:.25rem; }
-    .admin-tabs { display:flex; gap:.5rem; margin-bottom:1.5rem; flex-wrap:wrap; }
-    .admin-tab { padding:.5rem 1.1rem; border-radius:.65rem; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.04); color:var(--gray-4); font-size:.85rem; font-weight:500; cursor:pointer; transition:all .2s; }
-    .admin-tab:hover, .admin-tab.active { background:rgba(239,68,68,.12); border-color:rgba(239,68,68,.3); color:#fff; }
-    .tab-panel { display:none; }
-    .tab-panel.active { display:block; }
-
-    /* Users table */
-    .users-table { width:100%; border-collapse:collapse; }
-    .users-table th { text-align:left; padding:.6rem 1rem; color:var(--gray-5); font-size:.75rem; text-transform:uppercase; letter-spacing:.06em; border-bottom:1px solid rgba(255,255,255,.07); }
-    .users-table td { padding:.75rem 1rem; border-bottom:1px solid rgba(255,255,255,.05); font-size:.875rem; vertical-align:middle; }
-    .users-table tr:hover td { background:rgba(255,255,255,.02); }
-    .role-badge { display:inline-block; padding:.2rem .65rem; border-radius:999px; font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
-    .role-owner { background:rgba(239,68,68,.15); color:var(--red); border:1px solid rgba(239,68,68,.25); }
-    .role-moderator { background:rgba(99,102,241,.15); color:#818cf8; border:1px solid rgba(99,102,241,.25); }
-    .role-member { background:rgba(255,255,255,.06); color:var(--gray-3); border:1px solid rgba(255,255,255,.1); }
-    .ban-badge { display:inline-block; padding:.2rem .65rem; border-radius:999px; font-size:.72rem; background:rgba(239,68,68,.15); color:var(--red); border:1px solid rgba(239,68,68,.25); }
-    .action-btns { display:flex; gap:.4rem; flex-wrap:wrap; }
-    .action-btn { padding:.25rem .65rem; border-radius:.45rem; font-size:.75rem; font-weight:500; cursor:pointer; border:none; transition:opacity .2s; }
-    .action-btn:hover { opacity:.8; }
-    .btn-promote { background:rgba(99,102,241,.2); color:#818cf8; border:1px solid rgba(99,102,241,.3); }
-    .btn-demote  { background:rgba(255,255,255,.07); color:var(--gray-3); border:1px solid rgba(255,255,255,.1); }
-    .btn-ban     { background:rgba(239,68,68,.15); color:var(--red); border:1px solid rgba(239,68,68,.25); }
-    .btn-unban   { background:rgba(74,222,128,.12); color:#4ade80; border:1px solid rgba(74,222,128,.2); }
-    .btn-del-acc { background:rgba(239,68,68,.1); color:var(--red); border:1px solid rgba(239,68,68,.2); }
-
-    /* Forum moderation */
-    .mod-post-card { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:.8rem; padding:1rem 1.1rem; margin-bottom:.75rem; display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; }
-    .mod-post-info { flex:1; min-width:0; }
-    .mod-post-title { font-weight:600; font-size:.95rem; margin-bottom:.25rem; }
-    .mod-post-meta { color:var(--gray-5); font-size:.78rem; }
-    .mod-post-badges { display:flex; gap:.3rem; margin-top:.4rem; flex-wrap:wrap; }
-    .mod-actions { display:flex; gap:.4rem; flex-shrink:0; align-items:flex-start; }
-
-    /* Stats */
-    .stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem; margin-bottom:2rem; }
-    .stat-card { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:.9rem; padding:1.25rem; text-align:center; }
-    .stat-number { font-size:2rem; font-weight:800; background:linear-gradient(135deg,var(--red),var(--rose)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .stat-label { color:var(--gray-4); font-size:.8rem; margin-top:.25rem; }
-
-    .loading-row td { color:var(--gray-5); text-align:center; padding:2rem; }
-    .access-denied { text-align:center; padding:4rem 2rem; }
-    .access-denied .icon { font-size:4rem; margin-bottom:1rem; }
-    .access-denied h2 { font-size:1.5rem; font-weight:700; margin-bottom:.5rem; }
-    .access-denied p { color:var(--gray-4); }
+    /* Reuse your existing styles here */
+    .admin-layout { max-width:960px; margin:0 auto; padding:2rem 1.25rem; }
+    .role-badge { padding:.2rem .6rem; border-radius:999px; font-size:.7rem; font-weight:bold; text-transform:uppercase; }
+    .role-owner { background:rgba(239,68,68,.1); color:#ef4444; border:1px solid #ef4444; }
+    .role-member { background:rgba(255,255,255,.1); color:#ccc; }
+    .users-table { width:100%; border-collapse:collapse; margin-top:1rem; }
+    .users-table th { text-align:left; border-bottom:1px solid #333; padding:10px; color:#888; font-size:.8rem; }
+    .users-table td { padding:12px 10px; border-bottom:1px solid #222; }
+    .stat-card { background:#111; border:1px solid #333; padding:20px; border-radius:10px; text-align:center; }
+    .stat-number { font-size:1.8rem; font-weight:bold; color:var(--red); }
   </style>
 </head>
 <body>
   <nav class="site-nav">
     <div class="nav-inner">
-      <a href="index.html" class="nav-logo">⚔️ <span>LUCKY</span>&nbsp;NATION</a>
-      <ul class="nav-links" id="navLinks">
+      <a href="index.html" class="nav-logo">⚔️ LUCKY NATION</a>
+      <ul class="nav-links">
         <li><a href="index.html">Home</a></li>
         <li><a href="forum.html">Forum</a></li>
         <li><a href="admin.html" class="active">Admin</a></li>
       </ul>
-      <a href="how-to-join.html" class="nav-join-btn">▶ Join Now</a>
-      <button class="nav-hamburger" id="navHamburger" onclick="toggleNav()" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
     </div>
   </nav>
 
-  <div class="ambient">
-    <div class="ambient-blob ambient-blob-top"></div>
-    <div class="ambient-blob ambient-blob-bottom"></div>
-  </div>
-
-  <div class="admin-layout" id="adminLayout">
-    <div class="access-denied" id="loadingState">
-      <div class="icon">⏳</div>
-      <h2>Checking access…</h2>
+  <div class="admin-layout" id="adminContent">
     </div>
-  </div>
 
   <script>
-    const API_BASE = 'https://6a03d91fcdf586eefe386b9c.base44.app/functions';
-    const AUTH_API = API_BASE + '/authApi';
-    const FORUM_API = API_BASE + '/forumApi';
+    const AUTH_API = 'https://eocfyx3v7zr8kvf.m.pipedream.net';
+    const FORUM_API = 'https://eo3bfbe71nvlfzv.m.pipedream.net';
+    
+    const currentUser = JSON.parse(localStorage.getItem('luckyUser'));
 
-    let currentUser = null;
-    let currentClerkUser = null;
-
-    window.addEventListener('load', async () => {
-      try {
-        const clerk = new Clerk('pk_test_cHJlbWl1bS1ob3VuZC0xMy5jbGVyay5hY2NvdW50cy5kZXYk');
-        await Clerk.load();
-        const cu = Clerk.user;
-        if (!cu) { showAccessDenied('not_signed_in'); return; }
-        currentClerkUser = cu;
-
-        const res = await fetch(AUTH_API + '?action=login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ clerk_id: cu.id, email: cu.primaryEmailAddress?.emailAddress || '', full_name: cu.fullName || '' })
-        });
-        const data = await res.json();
-        if (!data.user) { showAccessDenied('no_profile'); return; }
-        currentUser = data.user;
-
-        if (!['owner', 'moderator'].includes(currentUser.site_role)) {
-          showAccessDenied('unauthorized');
-          return;
-        }
-
-        renderAdminPanel();
-      } catch (e) {
-        showAccessDenied('error');
-        console.error(e);
-      }
-    });
-
-    function showAccessDenied(reason) {
-      const msgs = {
-        not_signed_in: { icon: '🔐', title: 'Sign In Required', msg: 'You need to sign in to access this page.' },
-        unauthorized:  { icon: '🚫', title: 'Access Denied', msg: "You don't have permission to view this page." },
-        no_profile:    { icon: '⚠️', title: 'Profile Not Found', msg: 'Something went wrong with your account.' },
-        error:         { icon: '⚠️', title: 'Error', msg: 'Failed to verify your access. Try refreshing.' },
-      };
-      const m = msgs[reason] || msgs.error;
-      document.getElementById('adminLayout').innerHTML = `
-        <div class="access-denied">
-          <div class="icon">${m.icon}</div>
-          <h2>${m.title}</h2>
-          <p>${m.msg}</p>
-          ${reason === 'not_signed_in' ? '<button onclick="Clerk.openSignIn()" style="margin-top:1rem;padding:.6rem 1.4rem;background:linear-gradient(135deg,var(--red),var(--rose));color:#fff;border:none;border-radius:.65rem;cursor:pointer;font-weight:600;font-size:.9rem;">Sign In</button>' : ''}
-        </div>
-      `;
-    }
-
-    function renderAdminPanel() {
-      const isOwner = currentUser.site_role === 'owner';
-      document.getElementById('adminLayout').innerHTML = `
-        <div class="admin-header">
-          <h1>⚙️ Admin Panel</h1>
-          <p>Signed in as <strong>${escHtml(currentUser.full_name || currentUser.email)}</strong> — <span class="role-badge role-${currentUser.site_role}">${currentUser.site_role}</span></p>
-        </div>
-
-        <div class="stats-grid" id="statsGrid">
-          <div class="stat-card"><div class="stat-number" id="statUsers">–</div><div class="stat-label">Total Users</div></div>
-          <div class="stat-card"><div class="stat-number" id="statPosts">–</div><div class="stat-label">Forum Posts</div></div>
-          <div class="stat-card"><div class="stat-number" id="statBanned">–</div><div class="stat-label">Banned Users</div></div>
-          <div class="stat-card"><div class="stat-number" id="statMods">–</div><div class="stat-label">Moderators</div></div>
-        </div>
-
-        <div class="admin-tabs">
-          ${isOwner ? '<button class="admin-tab active" onclick="switchTab(\'users\', this)">👥 Users</button>' : ''}
-          <button class="admin-tab ${!isOwner ? 'active' : ''}" onclick="switchTab(\'forum\', this)">💬 Forum</button>
-        </div>
-
-        ${isOwner ? `
-        <div class="tab-panel active" id="tab-users">
-          <table class="users-table">
-            <thead><tr><th>Name / Email</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody id="usersTableBody"><tr class="loading-row"><td colspan="4">Loading users…</td></tr></tbody>
-          </table>
-        </div>` : ''}
-
-        <div class="tab-panel ${!isOwner ? 'active' : ''}" id="tab-forum">
-          <div id="forumModList"><div style="color:var(--gray-5);padding:2rem;text-align:center;">Loading posts…</div></div>
-        </div>
-      `;
-
-      loadStats();
-      if (isOwner) loadUsers();
-      loadForumMod();
-    }
-
-    async function loadStats() {
-      try {
-        const [usersRes, postsRes] = await Promise.all([
-          fetch(AUTH_API + '?action=list_users&caller_clerk_id=' + currentClerkUser.id),
-          fetch(FORUM_API + '?action=list_posts')
-        ]);
-        const usersData = await usersRes.json();
-        const postsData = await postsRes.json();
-        const users = usersData.users || [];
-        const posts = postsData.posts || [];
-        document.getElementById('statUsers').textContent = users.length;
-        document.getElementById('statPosts').textContent = posts.length;
-        document.getElementById('statBanned').textContent = users.filter(u => u.banned).length;
-        document.getElementById('statMods').textContent = users.filter(u => u.site_role === 'moderator').length;
-      } catch (e) {}
-    }
-
-    async function loadUsers() {
-      const tbody = document.getElementById('usersTableBody');
-      try {
-        const res = await fetch(AUTH_API + '?action=list_users&caller_clerk_id=' + currentClerkUser.id);
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        renderUsersTable(data.users || []);
-      } catch (e) {
-        tbody.innerHTML = `<tr class="loading-row"><td colspan="4">Error: ${escHtml(e.message)}</td></tr>`;
-      }
-    }
-
-    function renderUsersTable(users) {
-      const tbody = document.getElementById('usersTableBody');
-      if (!users.length) {
-        tbody.innerHTML = '<tr class="loading-row"><td colspan="4">No users found.</td></tr>';
+    window.addEventListener('load', () => {
+      if (!currentUser || (currentUser.role !== 'owner' && currentUser.role !== 'moderator')) {
+        document.getElementById('adminContent').innerHTML = `
+          <div style="text-align:center; padding:5rem;">
+            <h1>🚫 Access Denied</h1>
+            <p>Admin privileges required.</p>
+            <a href="forum.html" style="color:var(--red)">Return to Forum</a>
+          </div>`;
         return;
       }
-      tbody.innerHTML = users.map(u => {
-        const isSelf = u.id === currentUser.id;
-        const isOtherOwner = u.site_role === 'owner' && !isSelf;
-        return `
+      renderAdminPanel();
+    });
+
+    async function renderAdminPanel() {
+      const container = document.getElementById('adminContent');
+      container.innerHTML = `
+        <h1>⚙️ Admin Panel</h1>
+        <p>Logged in as: <b>${currentUser.username}</b></p>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin:20px 0;">
+            <div class="stat-card"><div class="stat-number" id="userCount">-</div><div class="stat-label">Total Users</div></div>
+            <div class="stat-card"><div class="stat-number" id="postCount">-</div><div class="stat-label">Forum Posts</div></div>
+        </div>
+
+        <h3>Registered Users</h3>
+        <table class="users-table">
+          <thead><tr><th>Username</th><th>Role</th></tr></thead>
+          <tbody id="userList"><tr><td>Loading...</td></tr></tbody>
+        </table>
+
+        <h3 style="margin-top:30px">Forum Moderation</h3>
+        <div id="modPostList">Loading posts...</div>
+      `;
+
+      loadAdminData();
+    }
+
+    async function loadAdminData() {
+      // 1. Load Stats and Users
+      const userRes = await fetch(`${AUTH_API}?action=list_users`);
+      const userData = await userRes.json();
+      document.getElementById('userCount').innerText = userData.users.length;
+      document.getElementById('userList').innerHTML = userData.users.map(u => `
         <tr>
-          <td>
-            <div style="font-weight:500">${escHtml(u.full_name || u.email)}</div>
-            <div style="color:var(--gray-5);font-size:.78rem">${escHtml(u.email)}</div>
-          </td>
-          <td><span class="role-badge role-${u.site_role || 'member'}">${u.site_role || 'member'}</span></td>
-          <td>${u.banned ? '<span class="ban-badge">Banned</span>' : '<span style="color:var(--gray-4);font-size:.8rem">Active</span>'}</td>
-          <td>
-            ${isSelf || isOtherOwner ? '<span style="color:var(--gray-6);font-size:.78rem">–</span>' : `
-            <div class="action-btns">
-              ${u.site_role === 'member' ? `<button class="action-btn btn-promote" onclick="setRole('${u.id}', 'moderator')">+ Mod</button>` : ''}
-              ${u.site_role === 'moderator' ? `<button class="action-btn btn-demote" onclick="setRole('${u.id}', 'member')">- Demote</button>` : ''}
-              ${!u.banned ? `<button class="action-btn btn-ban" onclick="banUser('${u.id}', true)">Ban</button>` : `<button class="action-btn btn-unban" onclick="banUser('${u.id}', false)">Unban</button>`}
-              <button class="action-btn btn-del-acc" onclick="deleteUser('${u.id}', '${escHtml(u.full_name || u.email)}')">Delete</button>
-            </div>`}
-          </td>
-        </tr>`;
-      }).join('');
-    }
+            <td>${u.username}</td>
+            <td><span class="role-badge role-${u.role}">${u.role}</span></td>
+        </tr>
+      `).join('');
 
-    async function setRole(userId, role) {
-      try {
-        const res = await fetch(AUTH_API + '?action=set_role', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ caller_clerk_id: currentClerkUser.id, target_user_id: userId, site_role: role })
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        loadUsers(); loadStats();
-      } catch (e) { alert('Error: ' + e.message); }
-    }
-
-    async function banUser(userId, banned) {
-      const reason = banned ? prompt('Reason for ban (optional):') : null;
-      if (banned && reason === null) return;
-      try {
-        const res = await fetch(AUTH_API + '?action=ban_user', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ caller_clerk_id: currentClerkUser.id, target_user_id: userId, banned, banned_reason: reason || '' })
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        loadUsers(); loadStats();
-      } catch (e) { alert('Error: ' + e.message); }
-    }
-
-    async function deleteUser(userId, name) {
-      if (!confirm(`Permanently delete account for "${name}"? This cannot be undone.`)) return;
-      try {
-        const res = await fetch(AUTH_API + '?action=delete_user&caller_clerk_id=' + currentClerkUser.id + '&target_user_id=' + userId, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        loadUsers(); loadStats();
-      } catch (e) { alert('Error: ' + e.message); }
-    }
-
-    async function loadForumMod() {
-      const container = document.getElementById('forumModList');
-      try {
-        const res = await fetch(FORUM_API + '?action=list_posts');
-        const data = await res.json();
-        const posts = (data.posts || []);
-        if (!posts.length) {
-          container.innerHTML = '<div style="color:var(--gray-5);text-align:center;padding:2rem;">No posts yet.</div>';
-          return;
-        }
-        const isOwner = currentUser.site_role === 'owner';
-        container.innerHTML = posts.map(p => `
-          <div class="mod-post-card">
-            <div class="mod-post-info">
-              <div class="mod-post-title">${escHtml(p.title)}</div>
-              <div class="mod-post-meta">by ${escHtml(p.author_name)} · ${timeAgo(p.created_date)} · ${p.reply_count || 0} replies</div>
-              <div class="mod-post-badges">
-                <span class="post-cat-badge">${escHtml(p.category)}</span>
-                ${p.pinned ? '<span class="badge badge-amber">📌 Pinned</span>' : ''}
-                ${p.locked ? '<span class="badge badge-gray">🔒 Locked</span>' : ''}
-              </div>
+      // 2. Load Posts
+      const postRes = await fetch(`${FORUM_API}?action=list_posts`);
+      const postData = await postRes.json();
+      document.getElementById('postCount').innerText = postData.posts.length;
+      document.getElementById('modPostList').innerHTML = postData.posts.map(p => `
+        <div style="background:#111; padding:15px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <b>${p.title}</b><br>
+                <small>by ${p.author}</small>
             </div>
-            <div class="mod-actions">
-              <button class="action-btn mod-btn-lock" onclick="modLockPost('${p.id}', ${!p.locked})">${p.locked ? '🔓' : '🔒'}</button>
-              ${isOwner ? `<button class="action-btn mod-btn-pin" onclick="modPinPost('${p.id}', ${!p.pinned})">${p.pinned ? '📌✕' : '📌'}</button>` : ''}
-              <button class="action-btn mod-btn-delete" onclick="modDeletePost('${p.id}')">🗑</button>
-            </div>
-          </div>
-        `).join('');
-      } catch (e) {
-        container.innerHTML = '<div style="color:var(--gray-5);text-align:center;padding:2rem;">Error loading posts.</div>';
-      }
+            <button onclick="deletePost('${p.id}')" style="background:#ef4444; border:none; color:white; padding:5px 10px; border-radius:4px; cursor:pointer;">Delete</button>
+        </div>
+      `).join('');
     }
 
-    async function modLockPost(postId, locked) {
-      try {
-        await fetch(FORUM_API + '?action=lock_post', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ clerk_id: currentClerkUser.id, post_id: postId, locked })
+    async function deletePost(id) {
+        if(!confirm("Delete this post?")) return;
+        await fetch(`${FORUM_API}?action=delete_post&post_id=${id}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ role: currentUser.role })
         });
-        loadForumMod();
-      } catch (e) { alert('Error: ' + e.message); }
-    }
-
-    async function modPinPost(postId, pinned) {
-      try {
-        await fetch(FORUM_API + '?action=pin_post', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ clerk_id: currentClerkUser.id, post_id: postId, pinned })
-        });
-        loadForumMod();
-      } catch (e) { alert('Error: ' + e.message); }
-    }
-
-    async function modDeletePost(postId) {
-      if (!confirm('Delete this post?')) return;
-      try {
-        await fetch(FORUM_API + '?action=delete_post&caller_clerk_id=' + currentClerkUser.id + '&post_id=' + postId, { method: 'DELETE' });
-        loadForumMod(); loadStats();
-      } catch (e) { alert('Error: ' + e.message); }
-    }
-
-    function switchTab(tab, btn) {
-      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('tab-' + tab).classList.add('active');
-    }
-
-    function escHtml(str) {
-      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    function timeAgo(dateStr) {
-      const diff = Date.now() - new Date(dateStr).getTime();
-      const m = Math.floor(diff / 60000);
-      if (m < 1) return 'just now';
-      if (m < 60) return m + 'm ago';
-      const h = Math.floor(m / 60);
-      if (h < 24) return h + 'h ago';
-      const d = Math.floor(h / 24);
-      if (d < 30) return d + 'd ago';
-      return new Date(dateStr).toLocaleDateString();
-    }
-
-    function toggleNav() {
-      document.getElementById('navLinks').classList.toggle('open');
-      document.getElementById('navHamburger').classList.toggle('open');
+        loadAdminData();
     }
   </script>
 </body>
