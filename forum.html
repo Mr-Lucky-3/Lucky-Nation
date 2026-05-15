@@ -6,7 +6,7 @@
   <title>Community Forum – Lucky Nation</title>
   <meta name="description" content="Join the Lucky Nation community forum. Discuss the server, share suggestions, get help, and more."/>
   <link rel="stylesheet" href="style.css" />
-  <script async crossorigin="anonymous" data-clerk-publishable-key="pk_test_cHJlbWl1bS1ob3VuZC0xMy5jbGVyay5hY2NvdW50cy5kZXYk" src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
   <style>
     .forum-layout { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:2rem 1.25rem 5rem; }
     .forum-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:2rem; }
@@ -218,6 +218,7 @@
     // ── Clerk init ──
     window.addEventListener('load', async () => {
       try {
+        const clerk = new Clerk('pk_test_cHJlbWl1bS1ob3VuZC0xMy5jbGVyay5hY2NvdW50cy5kZXYk');
         await Clerk.load();
         clerk = Clerk;
         const cu = clerk.user;
