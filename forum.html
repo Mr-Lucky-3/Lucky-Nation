@@ -247,6 +247,7 @@
         const data = await res.json();
         renderPostList(data.posts || []);
       } catch (e) {
+        console.error("FORUM ERROR:", e);
         list.innerHTML = '<p>Error connecting to Pipedream.</p>';
       }
     }
