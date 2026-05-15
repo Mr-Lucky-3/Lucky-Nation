@@ -4,9 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Community Forum – Lucky Nation</title>
-  <meta name="description" content="Join the Lucky Nation community forum. Discuss the server, share suggestions, get help, and more."/>
   <link rel="stylesheet" href="style.css" />
-  <script data-clerk-publishable-key="pk_test_cHJlbWl1bS1ob3VuZC0xMy5jbGVyay5hY2NvdW50cy5kZXYk" src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
   <style>
     .forum-layout { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:2rem 1.25rem 5rem; }
     .forum-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:2rem; }
@@ -107,7 +105,6 @@
   </style>
 </head>
 <body>
-  <!-- Nav -->
   <nav class="site-nav">
     <div class="nav-inner">
       <a href="index.html" class="nav-logo">⚔️ <span>LUCKY</span>&nbsp;NATION</a>
@@ -129,14 +126,7 @@
     </div>
   </nav>
 
-  <div class="ambient">
-    <div class="ambient-blob ambient-blob-top"></div>
-    <div class="ambient-blob ambient-blob-bottom"></div>
-  </div>
-
   <div class="forum-layout">
-
-    <!-- List View -->
     <div class="forum-list-view" id="listView">
       <div class="forum-header">
         <div>
@@ -146,25 +136,20 @@
         <div class="auth-bar">
           <span class="user-info" id="userInfo"></span>
           <button class="new-post-btn" id="newPostBtn" onclick="openNewPostModal()" disabled>+ New Post</button>
-          <button class="btn btn-secondary" id="authBtn" onclick="handleAuth()" style="padding:.5rem 1rem;font-size:.85rem;">Sign In</button>
+          <button class="btn btn-secondary" id="authBtn" onclick="handleAuth()" style="padding:.5rem 1rem;font-size:.85rem; background: rgba(255,255,255,0.1); border: 1px solid var(--gray-5); color: white; cursor: pointer; border-radius: 5px;">Sign In</button>
         </div>
       </div>
 
-      <div class="category-tabs">
+      <div class="category-tabs" id="tabs">
         <button class="cat-tab active" onclick="filterCategory('all', this)">All</button>
         <button class="cat-tab" onclick="filterCategory('general', this)">General</button>
-        <button class="cat-tab" onclick="filterCategory('announcements', this)">Announcements</button>
         <button class="cat-tab" onclick="filterCategory('suggestions', this)">Suggestions</button>
         <button class="cat-tab" onclick="filterCategory('help', this)">Help</button>
-        <button class="cat-tab" onclick="filterCategory('off-topic', this)">Off-Topic</button>
       </div>
 
-      <div class="post-list" id="postList">
-        <div class="empty-state"><div class="empty-icon">📋</div><p>Loading posts…</p></div>
-      </div>
+      <div class="post-list" id="postList"></div>
     </div>
 
-    <!-- Post Detail View -->
     <div class="post-view" id="postView">
       <button class="back-btn" onclick="goBack()">← Back to Forum</button>
       <div id="postDetail"></div>
@@ -180,77 +165,61 @@
   <div class="modal-overlay" id="newPostModal">
     <div class="modal">
       <h2>Create New Post</h2>
-      <div class="form-group">
-        <label>Title</label>
-        <input type="text" id="postTitleInput" placeholder="What's your post about?" maxlength="120" />
-      </div>
+      <div class="form-group"><label>Title</label><input type="text" id="postTitleInput" maxlength="120" /></div>
       <div class="form-group">
         <label>Category</label>
         <select id="postCategoryInput">
           <option value="general">General</option>
           <option value="suggestions">Suggestions</option>
           <option value="help">Help</option>
-          <option value="off-topic">Off-Topic</option>
         </select>
       </div>
-      <div class="form-group">
-        <label>Content</label>
-        <textarea id="postContentInput" rows="6" placeholder="Write your post here…"></textarea>
-      </div>
+      <div class="form-group"><label>Content</label><textarea id="postContentInput" rows="6"></textarea></div>
       <div class="modal-actions">
         <button class="btn-cancel" onclick="closeNewPostModal()">Cancel</button>
         <button class="btn-submit" id="submitPostBtn" onclick="submitPost()">Post</button>
       </div>
     </div>
   </div>
-  <div id="sign-in-modal">
-    
-  </div>
 
   <script>
-    const API_BASE = 'https://6a03d91fcdf586eefe386b9c.base44.app/functions';
-    const AUTH_API = API_BASE + '/authApi';
-    const FORUM_API = API_BASE + '/forumApi';
+    const AUTH_API = 'https://eocfyx3v7zr8kvf.m.pipedream.net'; 
+    const FORUM_API = 'https://eo3bfbe71nvlfzv.m.pipedream.net';
 
-    let currentUser = null;
-    let currentClerkUser = null;
+    let currentUser = JSON.parse(localStorage.getItem('luckyUser')) || null;
     let currentCategory = 'all';
     let currentPostId = null;
-    let clerk = null;
 
-    // ── Clerk init ──
-    window.addEventListener('load', async () => {
-      try {
-        await Clerk.load();
-        clerk = Clerk;
-        const cu = clerk.user;
-        if (cu) {
-          await syncUser(cu);
-        }
-        updateAuthUI();
-        loadPosts();
-      } catch (e) {
-        console.error('Clerk load error', e);
-        loadPosts();
-      }
+    window.addEventListener('load', () => {
+      updateAuthUI();
+      loadPosts();
     });
 
-    async function syncUser(cu) {
-      currentClerkUser = cu;
-      try {
-        const res = await fetch(AUTH_API + '?action=login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            clerk_id: cu.id,
-            email: cu.primaryEmailAddress?.emailAddress || '',
-            full_name: cu.fullName || cu.firstName || ''
-          })
-        });
-        const data = await res.json();
-        if (data.user) currentUser = data.user;
-      } catch (e) {
-        console.error('syncUser error', e);
+    // --- PIPEDREAM AUTH ---
+    async function handleAuth() {
+      if (currentUser) {
+        localStorage.removeItem('luckyUser');
+        currentUser = null;
+        location.reload();
+      } else {
+        const username = prompt("Enter your Lucky Nation Username:");
+        if (!username) return;
+
+        try {
+          const res = await fetch(`${AUTH_API}?username=${encodeURIComponent(username)}`);
+          const data = await res.json();
+          
+          if (data.user) {
+            currentUser = data.user;
+            localStorage.setItem('luckyUser', JSON.stringify(data.user));
+            updateAuthUI();
+            alert(`Welcome back, ${currentUser.username}!`);
+          } else {
+            alert("User not found. Check Pipedream Data Store.");
+          }
+        } catch (e) {
+          alert("Auth Server Error. Check Pipedream logs.");
+        }
       }
     }
 
@@ -259,10 +228,10 @@
       const btn = document.getElementById('authBtn');
       const newPostBtn = document.getElementById('newPostBtn');
 
-      if (currentClerkUser) {
-        info.textContent = currentClerkUser.firstName || currentClerkUser.primaryEmailAddress?.emailAddress || '';
+      if (currentUser) {
+        info.textContent = `${currentUser.username} (${currentUser.role})`;
         btn.textContent = 'Sign Out';
-        if (currentUser && !currentUser.banned) newPostBtn.disabled = false;
+        newPostBtn.disabled = false;
       } else {
         info.textContent = '';
         btn.textContent = 'Sign In';
@@ -270,280 +239,65 @@
       }
     }
 
-    async function handleAuth() {
-      if (currentClerkUser) {
-        await clerk.signOut();
-        currentUser = null;
-        currentClerkUser = null;
-        updateAuthUI();
-      } else {
-        const signInUrl = "https://premium-hound-13.accounts.dev/sign-in?redirect_url=" + encodeURIComponent(window.location.href);
-        window.location.href = signInUrl;
-      }
-    }
-
-    // ── Posts ──
     async function loadPosts() {
       const list = document.getElementById('postList');
-      list.innerHTML = '<div class="empty-state"><div class="empty-icon">⏳</div><p>Loading…</p></div>';
+      list.innerHTML = '<p>Loading posts...</p>';
       try {
-        const url = FORUM_API + '?action=list_posts' + (currentCategory !== 'all' ? '&category=' + currentCategory : '');
-        const res = await fetch(url);
+        const res = await fetch(`${FORUM_API}?action=list_posts&category=${currentCategory}`);
         const data = await res.json();
         renderPostList(data.posts || []);
       } catch (e) {
-        list.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Failed to load posts.</p></div>';
+        list.innerHTML = '<p>Error connecting to Pipedream.</p>';
       }
     }
 
     function renderPostList(posts) {
       const list = document.getElementById('postList');
-      if (!posts.length) {
-        list.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>No posts yet. Be the first to post!</p></div>';
+      if (posts.length === 0) {
+        list.innerHTML = '<div class="empty-state">No posts here yet.</div>';
         return;
       }
       list.innerHTML = posts.map(p => `
         <div class="post-card" onclick="openPost('${p.id}')">
           <div class="post-meta-left">
             <div class="post-title-row">
-              ${p.pinned ? '<span class="post-pin-icon">📌</span>' : ''}
-              ${p.locked ? '<span class="post-lock-icon">🔒</span>' : ''}
               <span class="post-title">${escHtml(p.title)}</span>
-              <span class="post-cat-badge">${escHtml(p.category)}</span>
+              <span class="post-cat-badge">${p.category}</span>
             </div>
-            <div class="post-excerpt">${escHtml(p.content.substring(0, 120))}${p.content.length > 120 ? '…' : ''}</div>
             <div class="post-footer">
-              <span class="post-author">by ${escHtml(p.author_name)}</span>
-              <span class="post-date">${timeAgo(p.created_date)}</span>
-              <span class="post-replies">💬 ${p.reply_count || 0}</span>
+              <span class="post-author">by ${p.author}</span>
+              <span class="post-date">${timeAgo(p.created_at)}</span>
             </div>
           </div>
         </div>
       `).join('');
     }
 
-    function filterCategory(cat, btn) {
-      currentCategory = cat;
-      document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      loadPosts();
-    }
-
-    // ── Post detail ──
-    async function openPost(id) {
-      currentPostId = id;
-      document.getElementById('listView').classList.add('hidden');
-      document.getElementById('postView').classList.add('open');
-      document.getElementById('postDetail').innerHTML = '<div class="empty-state"><p>Loading…</p></div>';
-      document.getElementById('repliesList').innerHTML = '';
-      document.getElementById('replyFormArea').innerHTML = '';
-
-      try {
-        const res = await fetch(FORUM_API + '?action=get_post&post_id=' + id);
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        renderPostDetail(data.post, data.replies || []);
-      } catch (e) {
-        document.getElementById('postDetail').innerHTML = '<div class="empty-state"><p>Failed to load post.</p></div>';
-      }
-    }
-
-    function renderPostDetail(post, replies) {
-      const isMod = currentUser && ['owner','moderator'].includes(currentUser.site_role);
-      const isOwner = currentUser && currentUser.site_role === 'owner';
-      const isAuthor = currentUser && currentUser.id === post.author_id;
-
-      document.getElementById('postDetail').innerHTML = `
-        <div class="post-full">
-          <div class="post-full-title">
-            ${post.pinned ? '📌 ' : ''}${post.locked ? '🔒 ' : ''}${escHtml(post.title)}
-          </div>
-          <div class="post-full-meta">
-            <span class="post-cat-badge">${escHtml(post.category)}</span>
-            <span>by ${escHtml(post.author_name)}</span>
-            <span>${timeAgo(post.created_date)}</span>
-          </div>
-          <div class="post-full-content">${escHtml(post.content)}</div>
-          ${(isMod || isAuthor) ? `
-          <div class="post-mod-actions">
-            ${(isMod || isAuthor) ? `<button class="mod-btn mod-btn-delete" onclick="deletePost('${post.id}')">🗑 Delete</button>` : ''}
-            ${isMod ? `<button class="mod-btn mod-btn-lock" onclick="toggleLock('${post.id}', ${!post.locked})">${post.locked ? '🔓 Unlock' : '🔒 Lock'}</button>` : ''}
-            ${isOwner ? `<button class="mod-btn mod-btn-pin" onclick="togglePin('${post.id}', ${!post.pinned})">${post.pinned ? '📌 Unpin' : '📌 Pin'}</button>` : ''}
-          </div>` : ''}
-        </div>
-      `;
-
-      const repliesList = document.getElementById('repliesList');
-      document.getElementById('repliesHeading').textContent = `Replies (${replies.length})`;
-      if (replies.length === 0) {
-        repliesList.innerHTML = '<p style="color:var(--gray-5);font-size:.85rem;margin-bottom:1rem;">No replies yet.</p>';
-      } else {
-        repliesList.innerHTML = replies.map(r => {
-          const canDel = currentUser && (['owner','moderator'].includes(currentUser.site_role) || currentUser.id === r.author_id);
-          return `
-          <div class="reply-card" id="reply-${r.id}">
-            <div class="reply-meta">
-              <span class="reply-author">${escHtml(r.author_name)}</span>
-              <span>${timeAgo(r.created_date)}</span>
-              ${canDel ? `<button class="reply-delete-btn" style="display:inline-block" onclick="deleteReply('${r.id}')">🗑</button>` : ''}
-            </div>
-            <div class="reply-content">${escHtml(r.content)}</div>
-          </div>`;
-        }).join('');
-      }
-
-      const replyArea = document.getElementById('replyFormArea');
-      if (!currentClerkUser) {
-        replyArea.innerHTML = `<div class="login-prompt"><p>Sign in to reply to this post.</p><button onclick="handleAuth()">Sign In</button></div>`;
-      } else if (post.locked && !isMod) {
-        replyArea.innerHTML = `<div class="reply-locked-msg">🔒 This thread is locked.</div>`;
-      } else if (currentUser?.banned) {
-        replyArea.innerHTML = `<div class="reply-locked-msg">You are banned from the forum.</div>`;
-      } else {
-        replyArea.innerHTML = `
-          <div class="reply-form">
-            <h4>Leave a Reply</h4>
-            <div class="form-group">
-              <textarea id="replyContent" rows="4" placeholder="Write your reply…"></textarea>
-            </div>
-            <button class="btn-submit" onclick="submitReply('${post.id}')">Post Reply</button>
-          </div>
-        `;
-      }
-    }
-
-    function goBack() {
-      currentPostId = null;
-      document.getElementById('listView').classList.remove('hidden');
-      document.getElementById('postView').classList.remove('open');
-      loadPosts();
-    }
-
-    // ── New post modal ──
-    function openNewPostModal() {
-      if (!currentUser) return;
-      document.getElementById('newPostModal').classList.add('open');
-    }
-    function closeNewPostModal() {
-      document.getElementById('newPostModal').classList.remove('open');
-    }
-
     async function submitPost() {
-      const title = document.getElementById('postTitleInput').value.trim();
-      const content = document.getElementById('postContentInput').value.trim();
+      const title = document.getElementById('postTitleInput').value;
+      const content = document.getElementById('postContentInput').value;
       const category = document.getElementById('postCategoryInput').value;
-      const btn = document.getElementById('submitPostBtn');
 
-      if (!title || !content) return alert('Title and content are required.');
-      btn.disabled = true;
-      btn.textContent = 'Posting…';
-
-      try {
-        const res = await fetch(FORUM_API + '?action=create_post', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ clerk_id: currentClerkUser.id, title, content, category })
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        closeNewPostModal();
-        document.getElementById('postTitleInput').value = '';
-        document.getElementById('postContentInput').value = '';
-        openPost(data.post.id);
-      } catch (e) {
-        alert('Error: ' + e.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Post';
-      }
+      await fetch(FORUM_API, {
+        method: 'POST',
+        body: JSON.stringify({
+          action: 'create_post',
+          author: currentUser.username,
+          role: currentUser.role,
+          title,
+          content,
+          category
+        })
+      });
+      closeNewPostModal();
+      loadPosts();
     }
 
-    async function submitReply(postId) {
-      const content = document.getElementById('replyContent').value.trim();
-      if (!content) return;
-
-      try {
-        const res = await fetch(FORUM_API + '?action=create_reply', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ clerk_id: currentClerkUser.id, post_id: postId, content })
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        openPost(postId); // refresh
-      } catch (e) {
-        alert('Error: ' + e.message);
-      }
-    }
-
-    // ── Mod actions ──
-    async function deletePost(postId) {
-      if (!confirm('Delete this post?')) return;
-      try {
-        const res = await fetch(FORUM_API + '?action=delete_post&caller_clerk_id=' + currentClerkUser.id + '&post_id=' + postId, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        goBack();
-      } catch (e) { alert('Error: ' + e.message); }
-    }
-
-    async function deleteReply(replyId) {
-      if (!confirm('Delete this reply?')) return;
-      try {
-        const res = await fetch(FORUM_API + '?action=delete_reply&caller_clerk_id=' + currentClerkUser.id + '&reply_id=' + replyId, { method: 'DELETE' });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        openPost(currentPostId);
-      } catch (e) { alert('Error: ' + e.message); }
-    }
-
-    async function toggleLock(postId, locked) {
-      try {
-        const res = await fetch(FORUM_API + '?action=lock_post', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ clerk_id: currentClerkUser.id, post_id: postId, locked })
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        openPost(postId);
-      } catch (e) { alert('Error: ' + e.message); }
-    }
-
-    async function togglePin(postId, pinned) {
-      try {
-        const res = await fetch(FORUM_API + '?action=pin_post', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ clerk_id: currentClerkUser.id, post_id: postId, pinned })
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        openPost(postId);
-      } catch (e) { alert('Error: ' + e.message); }
-    }
-
-    // ── Utils ──
-    function escHtml(str) {
-      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    function timeAgo(dateStr) {
-      const diff = Date.now() - new Date(dateStr).getTime();
-      const m = Math.floor(diff / 60000);
-      if (m < 1) return 'just now';
-      if (m < 60) return m + 'm ago';
-      const h = Math.floor(m / 60);
-      if (h < 24) return h + 'h ago';
-      const d = Math.floor(h / 24);
-      if (d < 30) return d + 'd ago';
-      return new Date(dateStr).toLocaleDateString();
-    }
-
-    function toggleNav() {
-      document.getElementById('navLinks').classList.toggle('open');
-      document.getElementById('navHamburger').classList.toggle('open');
-    }
+    function escHtml(str) { return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+    function timeAgo(d) { return "recently"; } 
+    function openNewPostModal() { document.getElementById('newPostModal').classList.add('open'); }
+    function closeNewPostModal() { document.getElementById('newPostModal').classList.remove('open'); }
+    function goBack() { document.getElementById('postView').classList.remove('open'); document.getElementById('listView').classList.remove('hidden'); }
   </script>
 </body>
 </html>
