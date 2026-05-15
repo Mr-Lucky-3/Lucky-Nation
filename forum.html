@@ -138,7 +138,6 @@
         <div class="auth-bar">
           <span class="user-info" id="userInfo"></span>
           <button class="new-post-btn" id="newPostBtn" onclick="openNewPostModal()" disabled>+ New Post</button>
-          <button class="btn btn-secondary" id="authBtn" onclick="handleAuth()" style="padding:.5rem 1rem;font-size:.85rem; background: rgba(255,255,255,0.1); border: 1px solid var(--gray-5); color: white; cursor: pointer; border-radius: 5px;">Sign In</button>
         </div>
       </div>
 
@@ -249,15 +248,12 @@
 
     function updateAuthUI() {
       const info = document.getElementById('userInfo');
-      const btn = document.getElementById('authBtn');
       const newPostBtn = document.getElementById('newPostBtn');
       if (currentUser) {
-        info.textContent = `${currentUser.username} (${currentUser.role})`;
-        btn.textContent = 'Sign Out';
+        info.textContent = `${currentUser.username}`;
         newPostBtn.disabled = false;
       } else {
         info.textContent = '';
-        btn.textContent = 'Sign In';
         newPostBtn.disabled = true;
       }
     }
