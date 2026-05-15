@@ -140,5 +140,25 @@ fetch('https://api.mcsrvstat.us/2/mr-lucky-army.falix.gg:29035')
     else{dot.className='status-dot offline';st.textContent='Offline';}
   }).catch(function(){});
 </script>
+  <script>
+(function updateDynamicNav() {
+    const user = JSON.parse(localStorage.getItem('luckyUser'));
+    const navBtn = document.getElementById('navActionBtn');
+
+    if (user && user.username) {
+        // If logged in: Show username and link to account page
+        navBtn.innerText = `👤 ${user.username}`;
+        navBtn.href = "account.html";
+        
+        // Optional: If you want it to look slightly different when it's a profile link
+        navBtn.style.background = "rgba(255,255,255,0.1)";
+        navBtn.style.border = "1px solid var(--red)";
+    } else {
+        // If NOT logged in: Show Login and link to login page
+        navBtn.innerText = "🔑 Login";
+        navBtn.href = "login.html";
+    }
+})();
+</script>
 </body>
 </html>
