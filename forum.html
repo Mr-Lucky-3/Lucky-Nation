@@ -277,10 +277,7 @@
         currentClerkUser = null;
         updateAuthUI();
       } else {
-        clerk.openSignIn({
-          redirectUrl: window.location.href 
-        });
-        // window.location.href = clerk.instance.signInUrl;
+        window.location.href = clerk.instance.signInUrl;
       }
     }
 
