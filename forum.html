@@ -278,20 +278,40 @@
       const title = document.getElementById('postTitleInput').value;
       const content = document.getElementById('postContentInput').value;
       const category = document.getElementById('postCategoryInput').value;
-
-      await fetch(FORUM_API, {
-        method: 'POST',
-        body: JSON.stringify({
-          action: 'create_post',
-          author: currentUser.username,
-          role: currentUser.role,
-          title,
-          content,
-          category
-        })
-      });
-      closeNewPostModal();
-      loadPosts();
+      const btn = document.getElementById('submitPostBtn');
+    
+      if(!title || !content) return alert("Please fill out all fields.");
+    
+      btn.disabled = true;
+      btn.textContent = "Posting...";
+    
+      try {
+        const res = await fetch(`${FORUM_API}?action=create_post`, { // Added action to URL for safety
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            author: currentUser.username,
+            role: currentUser.role,
+            title,
+            content,
+            category
+          })
+        });
+    
+        if (res.ok) {
+          document.getElementById('postTitleInput').value = '';
+          document.getElementById('postContentInput').value = '';
+          closeNewPostModal();
+          loadPosts(); // Refresh the list automatically
+        } else {
+          alert("Server refused the post. Check Pipedream.");
+        }
+      } catch (e) {
+        alert("Network error.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Post";
+      }
     }
 
     function escHtml(str) { return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
