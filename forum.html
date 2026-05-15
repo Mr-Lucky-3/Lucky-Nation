@@ -243,11 +243,10 @@
       const list = document.getElementById('postList');
       list.innerHTML = '<p>Loading posts...</p>';
       try {
-        const res = await fetch(`${FORUM_API}?action=list_posts&category=${currentCategory}`);
+        const res = await fetch(`${FORUM_API}?action=list_posts`);
         const data = await res.json();
         renderPostList(data.posts || []);
       } catch (e) {
-        console.error("FORUM ERROR:", e);
         list.innerHTML = '<p>Error connecting to Pipedream.</p>';
       }
     }
@@ -268,103 +267,99 @@
             <div class="post-footer">
               <span class="post-author">by ${p.author}</span>
               <span class="post-date">${timeAgo(p.created_at)}</span>
+              <span class="post-replies">💬 ${(p.replies || []).length}</span>
             </div>
           </div>
         </div>
       `).join('');
     }
 
-    async function submitPost() {
-      const title = document.getElementById('postTitleInput').value;
-      const content = document.getElementById('postContentInput').value;
-      const category = document.getElementById('postCategoryInput').value;
-      const btn = document.getElementById('submitPostBtn');
-    
-      if(!title || !content) return alert("Please fill out all fields.");
-    
-      btn.disabled = true;
-      btn.textContent = "Posting...";
-    
-      try {
-        const res = await fetch(`${FORUM_API}?action=create_post`, { // Added action to URL for safety
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            author: currentUser.username,
-            role: currentUser.role,
-            title,
-            content,
-            category
-          })
-        });
-    
-        if (res.ok) {
-          document.getElementById('postTitleInput').value = '';
-          document.getElementById('postContentInput').value = '';
-          closeNewPostModal();
-          loadPosts(); // Refresh the list automatically
-        } else {
-          alert("Server refused the post. Check Pipedream.");
-        }
-      } catch (e) {
-        alert("Network error.");
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Post";
-      }
-    }
     async function openPost(postId) {
-      const listView = document.getElementById('listView');
-      const postView = document.getElementById('postView');
-      const postDetail = document.getElementById('postDetail');
+      currentPostId = postId;
+      document.getElementById('listView').classList.add('hidden');
+      document.getElementById('postView').classList.add('open');
       
-      // 1. Hide list, show post view
-      listView.classList.add('hidden');
-      postView.classList.add('open');
-      postDetail.innerHTML = '<p>Loading post...</p>';
-  
-      try {
-          // 2. Fetch the latest posts
-          const res = await fetch(`${FORUM_API}?action=list_posts`);
-          const data = await res.json();
-          
-          // 3. Find the specific post by ID
-          const post = data.posts.find(p => p.id === postId);
-          
-          if (post) {
-              currentPostId = postId;
-              postDetail.innerHTML = `
-                  <div class="post-full">
-                      <h2 class="post-full-title">${escHtml(post.title)}</h2>
-                      <div class="post-full-meta">
-                          <span class="post-cat-badge">${escHtml(post.category)}</span>
-                          <span>by <b>${escHtml(post.author)}</b></span>
-                          <span>• ${new Date(post.created_at).toLocaleString()}</span>
-                      </div>
-                      <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:1.5rem 0;">
-                      <div class="post-full-content">${escHtml(post.content)}</div>
-                  </div>
-              `;
-              // We can add the Reply Form logic here later!
-          } else {
-              postDetail.innerHTML = '<p>Post not found.</p>';
-          }
-      } catch (e) {
-          postDetail.innerHTML = '<p>Error loading post details.</p>';
-      }
-  }
-  
-  // Function to go back to the main list
-  function Back() {
-      document.getElementById('postView').classList.remove('open');
-      document.getElementById('listView').classList.remove('hidden');
-      currentPostId = null;
-  }
+      const res = await fetch(`${FORUM_API}?action=list_posts`);
+      const data = await res.json();
+      const post = data.posts.find(p => p.id === postId);
+
+      if (!post) return;
+
+      // Show Post Details
+      const isStaff = currentUser && (currentUser.role === 'owner' || currentUser.role === 'moderator');
+      document.getElementById('postDetail').innerHTML = `
+        <div class="post-full">
+          <h2 class="post-full-title">${escHtml(post.title)}</h2>
+          <div class="post-full-meta">
+            <span class="post-cat-badge">${post.category}</span>
+            <span>by <b>${post.author}</b></span>
+            <span>• ${timeAgo(post.created_at)}</span>
+          </div>
+          <div class="post-full-content">${escHtml(post.content)}</div>
+          ${isStaff ? `<div class="post-mod-actions"><button class="mod-btn mod-btn-delete" onclick="deletePost('${post.id}')">Delete Post</button></div>` : ''}
+        </div>
+      `;
+
+      // Render Replies
+      renderReplies(post.replies || []);
+    }
+
+    function renderReplies(replies) {
+      const list = document.getElementById('repliesList');
+      const formArea = document.getElementById('replyFormArea');
+      
+      list.innerHTML = replies.map(r => `
+        <div class="reply-card">
+          <div class="reply-meta"><span class="reply-author">${r.author} (${r.role})</span> • ${timeAgo(r.created_at)}</div>
+          <div class="reply-content">${escHtml(r.content)}</div>
+        </div>
+      `).join('');
+
+      formArea.innerHTML = currentUser ? `
+        <div class="reply-form">
+          <h4>Leave a Reply</h4>
+          <textarea id="replyInput" rows="3" placeholder="Be nice!"></textarea>
+          <button class="btn-submit" onclick="submitReply()">Post Reply</button>
+        </div>
+      ` : '<p class="login-prompt">Sign in to join the discussion.</p>';
+    }
+
+    async function submitReply() {
+      const content = document.getElementById('replyInput').value;
+      if (!content) return;
+
+      await fetch(`${FORUM_API}?action=add_reply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          postId: currentPostId,
+          author: currentUser.username,
+          role: currentUser.role,
+          content: content
+        })
+      });
+      openPost(currentPostId); // Refresh view
+    }
+
+    async function deletePost(id) {
+      if (!confirm("Delete this post forever?")) return;
+      await fetch(`${FORUM_API}?action=delete_post&post_id=${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: currentUser.role })
+      });
+      goBack();
+      loadPosts();
+    }
+
     function escHtml(str) { return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-    function timeAgo(d) { return "recently"; } 
+    function timeAgo(d) { return new Date(d).toLocaleDateString(); } 
     function openNewPostModal() { document.getElementById('newPostModal').classList.add('open'); }
     function closeNewPostModal() { document.getElementById('newPostModal').classList.remove('open'); }
-    function goBack() { document.getElementById('postView').classList.remove('open'); document.getElementById('listView').classList.remove('hidden'); }
+    function goBack() { 
+      document.getElementById('postView').classList.remove('open'); 
+      document.getElementById('listView').classList.remove('hidden'); 
+    }  
   </script>
 </body>
 </html>
