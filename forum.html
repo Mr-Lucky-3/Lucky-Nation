@@ -365,7 +365,7 @@
       const formArea = document.getElementById('replyFormArea');
       list.innerHTML = replies.map(r => `
         <div class="reply-card">
-          <div class="reply-meta"><span class="reply-author">${r.pfp}${r.author}</span> • ${timeAgo(r.created_at)}</div>
+          <div class="reply-meta"><img src="${r.pfp}" class="post-avatar"><span class="reply-author">${r.author}</span> • ${timeAgo(r.created_at)}</div>
           <div class="reply-content">${escHtml(r.content)}</div>
         </div>
       `).join('');
