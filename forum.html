@@ -365,7 +365,7 @@
       const formArea = document.getElementById('replyFormArea');
       list.innerHTML = replies.map(r => `
         <div class="reply-card">
-          <div class="reply-meta"><span class="reply-author">${r.author}</span> • ${timeAgo(r.created_at)}</div>
+          <div class="reply-meta"><span class="reply-author">${r.pfp}${r.author}</span> • ${timeAgo(r.created_at)}</div>
           <div class="reply-content">${escHtml(r.content)}</div>
         </div>
       `).join('');
@@ -385,7 +385,7 @@
       await fetch(`${FORUM_API}?action=add_reply`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId: currentPostId, author: currentUser.username, role: currentUser.role, content })
+        body: JSON.stringify({ postId: currentPostId, author: currentUser.username, pfp: currentUser.pfp, role: currentUser.role, content })
       });
       openPost(currentPostId);
     }
