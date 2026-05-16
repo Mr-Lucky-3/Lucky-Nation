@@ -274,6 +274,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             author: currentUser.username,
+            pfp: currentUser.pfp,
             role: currentUser.role,
             title,
             content,
@@ -322,7 +323,7 @@
               <span class="post-cat-badge">${p.category}</span>
             </div>
             <div class="post-footer">
-              <img src="${p.authorPfp}" class="post-avatar">
+              <img src="${p.pfp}" class="post-avatar">
               <span class="post-author">by ${p.author}</span>
               <span class="post-date">${timeAgo(p.created_at)}</span>
               <span class="post-replies">💬 ${(p.replies || []).length}</span>
