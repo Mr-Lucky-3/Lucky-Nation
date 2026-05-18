@@ -89,8 +89,9 @@
     </div>
   </footer>
 
-  <script>
-    const AUTH_API = 'https://eovftd4nng49kt4.m.pipedream.net';
+ <script>
+    // Point this directly to your Cloudflare Auth Worker URL
+    const AUTH_API = 'https://orange-band-547a.micah-christian1-bf4.workers.dev'; // Replace with your auth worker subdomain link if separate
     let mode = 'login';
 
     function toggleMode() {
@@ -124,16 +125,16 @@
           localStorage.setItem('luckyUser', JSON.stringify(data.user));
           window.location.href = 'forum.html';
         } else {
-          alert(data.error || "Auth failed");
+          alert(data.error || "Authentication failed");
         }
       } catch (e) {
-        alert("Server Error");
+        alert("Server Authentication Error");
       } finally {
         btn.disabled = false;
         btn.innerText = mode === 'login' ? 'Login' : 'Sign Up';
       }
     }
-  </script>
+</script>
   <script>
 function toggleNav(){
   document.getElementById('navLinks').classList.toggle('open');
