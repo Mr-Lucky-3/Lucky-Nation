@@ -124,30 +124,20 @@ function submitAppeal() {
         return;
     }
 
-    const webhookURL = "https://discord.com/api/webhooks/1504321646151073793/JlFfwKKTbwlBvLhel8vkBQ0pVWvMedywKKzDDdsBvHgrivhNWFL-b0EBfXbPG-0HYnxP";
+    // Points to your single deployment Worker link
+    const WORKER_API = "https://orange-band-547a.micah-christian1-bf4.workers.dev";
 
     const data = {
-        "content": "🚨 **New Ban Appeal Submitted!**",
-        "embeds": [
-            {
-                "title": "Appeal Details",
-                "color": 15548997,
-                "fields": [
-                    { "name": "Minecraft Username", "value": mcName, "inline": true },
-                    { "name": "Discord Handle", "value": discordName, "inline": true },
-                    { "name": "Punishment Type", "value": punishType, "inline": true },
-                    { "name": "Date of Ban", "value": banDate, "inline": true },
-                    { "name": "Stated Reason", "value": banReason, "inline": false },
-                    { "name": "Player's Explanation", "value": explanation, "inline": false },
-                    { "name": "Why unban?", "value": whyUnban, "inline": false }
-                ],
-                "footer": { "text": "Lucky Nation Appeal System" },
-                "timestamp": new Date().toISOString()
-            }
-        ]
+        mcName,
+        discordName,
+        punishType,
+        banDate,
+        banReason,
+        explanation,
+        whyUnban
     };
 
-    fetch(webhookURL, {
+    fetch(`${WORKER_API}?action=submit_appeal`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
