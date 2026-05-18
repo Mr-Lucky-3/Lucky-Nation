@@ -42,9 +42,9 @@
         <div style="margin: 20px 0;">
             <label class="custom-file-upload">
                 <input type="file" id="pfpFile" accept="image/*" style="display:none;">
-                <span>📁 Choose New Image</span>
+                <span class="btn">📁 Choose New Image</span>
             </label>
-            <button onclick="uploadImage()" id="uploadBtn" class="btn-mod">Upload & Save</button>
+            <button onclick="uploadImage()" id="uploadBtn" class="btn">Upload & Save</button>
         </div>
         
         <script>
@@ -124,7 +124,7 @@ async function uploadImage() {
         <div class="danger-zone">
             <h3>Danger Zone</h3>
             <p style="font-size: 0.8rem; color: #888;">Deleting your account is permanent.</p>
-            <button onclick="deleteSelf()" class="btn-delete">Delete My Account</button>
+            <button onclick="deleteSelf()" class="btn">Delete My Account</button>
         </div>
     </div>
 
