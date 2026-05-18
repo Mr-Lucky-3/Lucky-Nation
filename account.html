@@ -125,52 +125,61 @@ fetch('https://api.mcsrvstat.us/2/mr-lucky-army.falix.gg:29035')
     </div>
 
     <script>
-        const AUTH_API = 'https://eovftd4nng49kt4.m.pipedream.net';
-        const user = JSON.parse(localStorage.getItem('luckyUser'));
+    // Swap this with your actual Cloudflare Worker URL
+    const AUTH_API = 'https://orange-band-547a.micah-christian1-bf4.workers.dev/';
+    const user = JSON.parse(localStorage.getItem('luckyUser'));
 
-        if (!user) window.location.href = 'login.html';
+    if (!user) window.location.href = 'login.html';
 
-        document.getElementById('displayUsername').innerText = user.username;
-        document.getElementById('currentPfp').src = user.pfp || 'default-avatar.png';
-        document.getElementById('pfpInput').value = user.pfp || '';
+    document.getElementById('displayUsername').innerText = user.username;
+    document.getElementById('currentPfp').src = user.pfp || 'default-avatar.png';
+    document.getElementById('pfpInput').value = user.pfp || '';
 
-        async function savePfp() {
-          const newUrl = document.getElementById('pfpInput').value;
-          
-          const res = await fetch(`${AUTH_API}?action=save_pfp`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ 
-                  username: user.username, 
-                  pfpUrl: newUrl 
-              })
-          });
-      
-          if (res.ok) {
-              // Update the local storage so the navbar updates immediately
-              user.pfp = newUrl;
-              localStorage.setItem('luckyUser', JSON.stringify(user));
-              document.getElementById('currentPfp').src = newUrl;
-              alert("Profile picture updated successfully!");
-          }
-      }
-
-        function logout() {
-            localStorage.removeItem('luckyUser');
-            window.location.href = 'index.html';
+    async function savePfp() {
+        const newUrl = document.getElementById('pfpInput').value;
+        
+        // Hits the Cloudflare Worker action directly
+        const res = await fetch(`${AUTH_API}?action=save_pfp`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                username: user.username, 
+                pfpUrl: newUrl 
+            })
+        });
+    
+        if (res.ok) {
+            // Update local storage so the profile layouts update immediately
+            user.pfp = newUrl;
+            localStorage.setItem('luckyUser', JSON.stringify(user));
+            document.getElementById('currentPfp').src = newUrl;
+            alert("Profile picture updated successfully!");
+        } else {
+            alert("Failed to update profile picture.");
         }
+    }
 
-        async function deleteSelf() {
-            if (!confirm("Are you sure? This will wipe your account from Lucky Nation forever.")) return;
-            
-            await fetch(`${AUTH_API}?action=delete_account`, {
-                method: 'POST',
-                body: JSON.stringify({ targetUsername: user.username })
-            });
-            
+    function logout() {
+        localStorage.removeItem('luckyUser');
+        window.location.href = 'index.html';
+    }
+
+    async function deleteSelf() {
+        if (!confirm("Are you sure? This will wipe your account from Lucky Nation forever.")) return;
+        
+        const res = await fetch(`${AUTH_API}?action=delete_account`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ targetUsername: user.username })
+        });
+        
+        if (res.ok) {
             logout();
+        } else {
+            alert("Failed to delete account.");
         }
-    </script>
+    }
+</script>
     <footer class="footer">
     <div class="container">
       <div class="footer-row">
