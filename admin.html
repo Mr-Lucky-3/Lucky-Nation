@@ -79,8 +79,9 @@
     </div>
   </footer>
   <script>
-    const AUTH_API = 'https://eocfyx3v7zr8kvf.m.pipedream.net';
-    const FORUM_API = 'https://eo3bfbe71nvlfzv.m.pipedream.net';
+    // Update these to match your live Cloudflare Worker deployment URLs
+    const AUTH_API = 'https://orange-band-547a.micah-christian1-bf4.workers.dev'; 
+    const FORUM_API = 'https://orange-band-547a.micah-christian1-bf4.workers.dev'; // Replace with your actual forum worker URL
     
     const currentUser = JSON.parse(localStorage.getItem('luckyUser'));
 
@@ -130,7 +131,7 @@
 
     async function loadAdminData() {
       try {
-        // 1. Fetch Users
+        // 1. Fetch Users from Cloudflare Auth Worker
         const userRes = await fetch(`${AUTH_API}?action=list_users`);
         const userData = await userRes.json();
         document.getElementById('userCount').innerText = userData.users.length;
@@ -152,7 +153,7 @@
           </tr>
         `).join('');
 
-        // 2. Fetch Posts
+        // 2. Fetch Posts from Cloudflare Forum Worker
         const postRes = await fetch(`${FORUM_API}?action=list_posts`);
         const postData = await postRes.json();
         document.getElementById('postCount').innerText = postData.posts.length;
@@ -170,12 +171,13 @@
       }
     }
 
-    // --- Pipedream API Calls ---
+    // --- Cloudflare API Actions ---
 
     async function updateRole(targetUsername, newRole) {
         if(!confirm(`Change ${targetUsername} to ${newRole}?`)) return;
         await fetch(`${AUTH_API}?action=set_role`, {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ targetUsername, newRole })
         });
         loadAdminData();
@@ -185,6 +187,7 @@
         if(!confirm(`Permanently delete user "${targetUsername}"?`)) return;
         await fetch(`${AUTH_API}?action=delete_account`, {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ targetUsername })
         });
         loadAdminData();
@@ -192,13 +195,15 @@
 
     async function deletePost(id) {
         if(!confirm("Delete this forum post?")) return;
+        // Modified query formatting to align precisely with Cloudflare url.searchParams matching
         await fetch(`${FORUM_API}?action=delete_post&post_id=${id}`, {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ role: currentUser.role })
         });
         loadAdminData();
     }
-  </script>
+</script>
   <script>
 function toggleNav(){
   document.getElementById('navLinks').classList.toggle('open');
