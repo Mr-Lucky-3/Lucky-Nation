@@ -88,6 +88,65 @@
       animation: spin .7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+    /* Dark semi-transparent background overlay */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Central Popup White Box Vault */
+.modal-content {
+  background: #1e1e24; /* Adjusted dark layout theme style */
+  color: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  border: 1px solid #333;
+}
+
+/* Close button formatting */
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 30px;
+  color: #aaa;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.close-modal:hover {
+  color: #fff;
+}
+
+.modal-announcement-media img, 
+.modal-announcement-media video {
+  margin-top: 15px;
+  width: 100%;
+  object-fit: cover;
+}
+
+/* If multiple assets are attached, display them stacked or tiled */
+.multi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 15px;
+}
   </style>
   <link rel="icon" type="image/png" href="icon.png">
 </head>
@@ -189,66 +248,130 @@ fetch('https://api.mcsrvstat.us/2/mr-lucky-army.falix.gg:29035')
     else{dot.className='status-dot offline';st.textContent='Offline';}
   }).catch(function(){});
 </script>
- <script>
+ <div id="announcement-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeAnnouncementModal()">&times;</span>
+    <div id="modal-announcement-body"></div>
+  </div>
+</div>
+
+<script>
+    // Keep a global array reference to lookup items when clicked
+    let globalAnnouncements = [];
+
     (async () => {
       const feed = document.getElementById('announcements-feed');
 
-      // Point this directly to your unified Master Worker
-      const url = `https://orange-band-547a.micah-christian1-bf4.workers.dev/?action=get_latest_announcement`;
+      // Direct connection to your live database endpoint
+      const url = `https://orange-band-547a.micah-christian1-bf4.workers.dev/?action=get_latest_announcement`; // 
 
-      let announcements;
       try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(res.status);
-        announcements = await res.json();
-      } catch (err) {
-        feed.innerHTML = '<p class="no-announcements">Could not load announcements. Try again later.</p>';
-        return;
+        const res = await fetch(url); // 
+        if (!res.ok) throw new Error(res.status); // 
+        globalAnnouncements = await res.json(); // 
+      } catch (err) { // [cite: 2]
+        feed.innerHTML = '<p class="no-announcements">Could not load announcements. Try again later.</p>'; // [cite: 2]
+        return; // [cite: 2]
       }
 
-      if (!announcements || !announcements.length) {
-        feed.innerHTML = '<p class="no-announcements">No announcements yet. Check back soon!</p>';
-        return;
+      if (!globalAnnouncements || !globalAnnouncements.length) { // [cite: 2]
+        feed.innerHTML = '<p class="no-announcements">No announcements yet. Check back soon!</p>'; // [cite: 2]
+        return; // [cite: 2]
       }
 
       // Sort newest first (by id descending — higher id = newer)
-      const sorted = [...announcements].sort((a, b) => b.id - a.id);
+      const sorted = [...globalAnnouncements].sort((a, b) => b.id - a.id); // [cite: 3]
+      
       feed.innerHTML = sorted.map((a, i) => {
         let mediaHtml = '';
-        if (a.media && a.media.length === 1) {
-          const m = a.media[0];
-          if (m.type === 'image') {
-            mediaHtml = `<div class="announcement-media"><img src="${m.url}" alt="" /></div>`;
-          } else if (m.type === 'video') {
-            mediaHtml = `<div class="announcement-media"><video src="${m.url}" controls></video></div>`;
-          }
-        } else if (a.media && a.media.length > 1) {
-          const items = a.media.map(m =>
-            m.type === 'video'
-              ? `<video src="${m.url}" controls></video>`
-              : `<img src="${m.url}" alt="" />`
-          ).join('');
-          mediaHtml = `<div class="announcement-media multi">${items}</div>`;
+        if (a.media && a.media.length === 1) { // [cite: 3]
+          const m = a.media[0]; // [cite: 3]
+          if (m.type === 'image') { // [cite: 4]
+            mediaHtml = `<div class="announcement-media"><img src="${m.url}" alt="" /></div>`; // [cite: 4]
+          } else if (m.type === 'video') { // [cite: 5]
+            mediaHtml = `<div class="announcement-media"><video src="${m.url}" controls></video></div>`; // [cite: 5]
+          } // [cite: 6]
+        } else if (a.media && a.media.length > 1) { // [cite: 6]
+          const items = a.media.map(m => // [cite: 6]
+            m.type === 'video' // [cite: 6]
+              ? `<video src="${m.url}" controls></video>` // [cite: 6]
+              : `<img src="${m.url}" alt="" />` // [cite: 6]
+          ).join(''); // [cite: 6]
+          mediaHtml = `<div class="announcement-media multi">${items}</div>`; // [cite: 7]
         }
 
+        // Added an 'onclick' event and pointer style to let users click into the card
         return `
-          <div class="announcement-card" style="animation-delay:${i * 0.05}s">
+          <div class="announcement-card" style="animation-delay:${i * 0.05}s; cursor: pointer;" onclick="openAnnouncement(${a.id})">
             ${mediaHtml}
             <div class="announcement-body">
               <h3>${escHtml(a.title)}</h3>
               <p class="announcement-meta">Posted by ${escHtml(a.author)}</p>
-              <p class="announcement-content">${escHtml(a.content)}</p>
+              <p class="announcement-content">${escHtml(a.content.substring(0, 150))}${a.content.length > 150 ? '...' : ''}</p>
             </div>
-          </div>`;
-      }).join('');
+          </div>`; // 
+      }).join(''); // [cite: 9]
     })();
 
-    function escHtml(str) {
-      return String(str)
-        .replace(/&/g,'&amp;')
-        .replace(/</g,'&lt;')
-        .replace(/>/g,'&gt;')
-        .replace(/"/g,'&quot;');
+    // FUNCTION: Find the matching item and open it inside the modal frame
+    function openAnnouncement(id) {
+      const modal = document.getElementById('announcement-modal');
+      const body = document.getElementById('modal-announcement-body');
+      
+      const a = globalAnnouncements.find(item => item.id === id);
+      if (!a) return;
+
+      // Handle full-view media rendering inside the modal container
+      let mediaHtml = '';
+      if (a.media && a.media.length === 1) {
+        const m = a.media[0];
+        if (m.type === 'image') {
+          mediaHtml = `<div class="modal-announcement-media"><img src="${m.url}" style="max-width:100%; border-radius:8px;" alt="" /></div>`;
+        } else if (m.type === 'video') {
+          mediaHtml = `<div class="modal-announcement-media"><video src="${m.url}" style="max-width:100%; border-radius:8px;" controls></video></div>`;
+        }
+      } else if (a.media && a.media.length > 1) {
+        const items = a.media.map(m =>
+          m.type === 'video'
+            ? `<video src="${m.url}" controls style="max-width:100%; border-radius:8px;"></video>`
+            : `<img src="${m.url}" style="max-width:100%; border-radius:8px;" alt="" />`
+        ).join('');
+        mediaHtml = `<div class="modal-announcement-media multi-grid">${items}</div>`;
+      }
+
+      // Generate the clean view payload (Strictly text + layout, no comments/replies)
+      body.innerHTML = `
+        <div class="modal-announcement-header">
+          <h2>${escHtml(a.title)}</h2>
+          <p class="announcement-meta">Posted by ${escHtml(a.author)}</p>
+        </div>
+        ${mediaHtml}
+        <div class="modal-announcement-text" style="margin-top: 15px; line-height: 1.6; white-space: pre-wrap;">
+          <p>${escHtml(a.content)}</p>
+        </div>
+      `;
+
+      modal.style.display = 'flex';
+    }
+
+    function closeAnnouncementModal() {
+      document.getElementById('announcement-modal').style.display = 'none';
+    }
+
+    // Close modal if user clicks outside the content box wrapper
+    window.addEventListener('click', (e) => {
+      const modal = document.getElementById('announcement-modal');
+      if (e.target === modal) {
+        closeAnnouncementModal();
+      }
+    });
+
+    function escHtml(str) { // [cite: 9]
+      return String(str) // [cite: 9]
+        .replace(/&/g,'&amp;') // [cite: 9]
+        .replace(/</g,'&lt;') // [cite: 9]
+        .replace(/>/g,'&gt;') // [cite: 9]
+        .replace(/"/g,'&quot;'); // [cite: 9]
     }
 </script>
   <script>
