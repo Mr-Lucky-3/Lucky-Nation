@@ -76,36 +76,29 @@
 </section>
 <script>
     (async () => {
-      // Points directly to your live Orange Worker endpoint
       const workerBaseUrl = "https://orange-band-547a.micah-christian1-bf4.workers.dev";
       
-      // List of active staff usernames you want to fetch avatars for
-      // Whenever you add a new staff member, simply add their exact registration username here!
       const staffList = ["Mr. Lucky"];
 
       for (const username of staffList) {
         try {
-          // Use your built-in GET endpoint lookup feature
           const res = await fetch(`${workerBaseUrl}/?username=${encodeURIComponent(username)}`);
           
           if (res.ok) {
             const data = await res.json();
             
-            // If the user profile exists and has a saved custom avatar link
             if (data.user && data.user.pfp) {
-              // Convert the username to lowercase to find our target div container ID
-              const targetElementId = `avatar-${username.toLowerCase()}`;
+              const targetElementId = `avatar-${username.toLowerCase().replace(/[\s.]/g, '')}`;
               const avatarDiv = document.getElementById(targetElementId);
               
               if (avatarDiv) {
-                // Clear background styling and drop in the clean dynamic image layout
                 avatarDiv.style.background = "none";
                 avatarDiv.innerHTML = `<img src="${data.user.pfp}" alt="${username}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;" />`;
               }
             }
           }
         } catch (err) {
-          console.error(`Failed loading dynamic profile image data for staff account: ${username}`, err);
+          console.error(`Failed loading profile image data for staff account: ${username}`, err);
         }
       }
     })();
