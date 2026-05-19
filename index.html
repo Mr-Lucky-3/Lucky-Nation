@@ -13,32 +13,12 @@
   <link rel="manifest" href="site.webmanifest"/>
   <link rel="icon" type="image/png" href="icon.png">
   <link rel="stylesheet" href="style.css" />
+  <script src="load.js" defer></script>
 </head>
 <body>
 
   <!-- Nav -->
-  <nav class="site-nav">
-    <div class="nav-inner">
-      <a href="index.html" class="nav-logo">⚔️ <span>LUCKY</span>&nbsp;NATION</a>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html" class="active">Home</a></li>
-        <li><a href="announcements.html">News</a></li>
-        <li><a href="rules.html">Rules</a></li>
-        <li><a href="how-to-join.html">Join</a></li>
-        <li><a href="forum.html">Forum</a></li>
-        <li><a href="staff.html">Staff</a></li>
-        <li><a href="vote.html">Vote</a></li>
-        <li><a href="store.html">Store</a></li>
-        <li><a href="faq.html">FAQ</a></li>
-        <li><a href="leaderboards.html">Leaderboards</a></li>
-        <li><a href="player.html">Search Player</a></li>
-      </ul>
-      <a href="how-to-join.html" class="nav-join-btn" id="navActionBtn">▶ Join Now</a>
-      <button class="nav-hamburger" id="navHamburger" onclick="toggleNav()" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </nav>
+  <nav class="site-nav"></nav>
 
   <!-- Ambient Background -->
   <div class="ambient">
@@ -236,73 +216,9 @@
   </section>
 
   <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-row">
-        <div class="footer-brand">
-          <h3 class="gradient-text footer-logo">Lucky Nation</h3>
-          <p class="footer-tagline">A fair, fun, and feature-rich Minecraft experience</p>
-        </div>
-        <div class="footer-meta">
-          <div class="server-status">
-            <span class="status-dot" id="status-dot"></span>
-            <span id="status-text">Checking...</span>
-            <span class="players-text" id="players-text"></span>
-          </div>
-          <div class="footer-ip">mr-lucky-army.falix.gg:29035</div>
-          <a href="https://discord.gg/ppqBAUPrqf" target="_blank" rel="noopener noreferrer" class="footer-discord">Discord</a>
-        </div>
-      </div>
-      <div class="footer-links" style="margin-top:1.5rem;">
-        <a href="index.html">Home</a>
-        <a href="announcements.html">News</a>
-        <a href="rules.html">Rules</a>
-        <a href="how-to-join.html">How to Join</a>
-        <a href="staff.html">Staff</a>
-        <a href="vote.html">Vote</a>
-        <a href="store.html">Store</a>
-        <a href="faq.html">FAQ</a>
-        <a href="appeal.html">Appeal</a>
-        <a href="leaderboards.html">Leaderboards</a>
-        <a href="changelog.html">Changelog</a>
-      </div>
-      <div class="footer-copy">
-        &copy; <span id="year"></span> Lucky Nation. Not affiliated with Mojang Studios.
-      </div>
-    </div>
-  </footer>
+  <footer class="footer"></footer>
 
   <script src="script.js"></script>
-
-<script>
-function toggleNav(){
-  const links = document.getElementById('navLinks');
-  const ham   = document.getElementById('navHamburger');
-  links.classList.toggle('open');
-  ham.classList.toggle('open');
-}
-// footer status already handled by existing script.js
-</script>
-  <script>
-(function updateDynamicNav() {
-    const user = JSON.parse(localStorage.getItem('luckyUser'));
-    const navBtn = document.getElementById('navActionBtn');
-
-    if (user && user.username) {
-        // If logged in: Show username and link to account page
-        navBtn.innerText = `👤 ${user.username}`;
-        navBtn.href = "account.html";
-        
-        // Optional: If you want it to look slightly different when it's a profile link
-        navBtn.style.background = "rgba(255,255,255,0.1)";
-        navBtn.style.border = "1px solid var(--red)";
-    } else {
-        // If NOT logged in: Show Login and link to login page
-        navBtn.innerText = "🔑 Login";
-        navBtn.href = "login.html";
-    }
-})();
-</script>
 </body>
 </html>
 

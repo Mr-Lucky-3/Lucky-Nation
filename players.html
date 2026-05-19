@@ -13,29 +13,10 @@
   <link rel="icon" type="image/png" href="icon.png">
   <link rel="manifest" href="site.webmanifest"/>
   <link rel="stylesheet" href="style.css"/>
+  <script src="load.js" defer></script>
 </head>
 <body>
-  <nav class="site-nav">
-    <div class="nav-inner">
-      <a href="index.html" class="nav-logo">&#9876;&#65039; <span>LUCKY</span>&nbsp;NATION</a>
-      <ul class="nav-links" id="navLinks">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="announcements.html">News</a></li>
-        <li><a href="rules.html">Rules</a></li>
-        <li><a href="how-to-join.html">Join</a></li>
-        <li><a href="staff.html">Staff</a></li>
-        <li><a href="vote.html">Vote</a></li>
-        <li><a href="store.html">Store</a></li>
-        <li><a href="faq.html">FAQ</a></li>
-        <li><a href="leaderboards.html">Leaderboards</a></li>
-        <li><a href="player.html">Search Player</a></li>
-      </ul>
-      <a href="how-to-join.html" class="nav-join-btn" id="navActionBtn">&#9654; Join Now</a>
-      <button class="nav-hamburger" id="navHamburger" onclick="toggleNav()" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </nav>
+  <nav class="site-nav"></nav>
   <div class="ambient">
     <div class="ambient-blob ambient-blob-top"></div>
     <div class="ambient-blob ambient-blob-bottom"></div>
@@ -59,52 +40,7 @@
     </div>
     <div class="player-not-found" id="pNF"><div style="font-size:3rem;margin-bottom:1rem;">&#128269;</div><p>Player not found. Make sure you entered the correct username.</p></div>
   </div></section>
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-row">
-        <div>
-          <div class="footer-logo"><span class="gradient-text">LUCKY</span> NATION</div>
-          <div class="footer-tagline">A fair, player-driven Minecraft experience</div>
-        </div>
-        <div class="footer-meta">
-          <div class="server-status"><div class="status-dot" id="fDot"></div><span id="fSt">Checking...</span></div>
-          <span class="players-text" id="fPl"></span>
-          <span class="footer-ip">mr-lucky-army.falix.gg:29035</span>
-          <a href="https://discord.gg/ppqBAUPrqf" target="_blank" class="footer-discord">Discord &#8599;</a>
-        </div>
-      </div>
-      <div class="footer-links">
-        <a href="index.html">Home</a><a href="announcements.html">News</a>
-        <a href="rules.html">Rules</a><a href="how-to-join.html">How to Join</a>
-        <a href="staff.html">Staff</a><a href="vote.html">Vote</a>
-        <a href="store.html">Store</a><a href="faq.html">FAQ</a>
-        <a href="appeal.html">Appeal</a><a href="leaderboards.html">Leaderboards</a>
-        <a href="changelog.html">Changelog</a>
-      </div>
-      <div class="footer-copy">&copy; 2025 Lucky Nation &middot; Not affiliated with Mojang Studios</div>
-    </div>
-  </footer>
-
-<script>
-function toggleNav(){
-  document.getElementById('navLinks').classList.toggle('open');
-  document.getElementById('navHamburger').classList.toggle('open');
-}
-(function(){
-  var p=location.pathname.split('/').pop()||'index.html';
-  document.querySelectorAll('.nav-links a').forEach(function(a){
-    if(a.getAttribute('href')===p) a.classList.add('active');
-  });
-})();
-// footer server status
-fetch('https://api.mcsrvstat.us/2/mr-lucky-army.falix.gg:29035')
-  .then(function(r){return r.json();}).then(function(d){
-    var dot=document.getElementById('fDot'),st=document.getElementById('fSt'),pl=document.getElementById('fPl');
-    if(!dot)return;
-    if(d.online){dot.className='status-dot online';st.textContent='Online';if(pl&&d.players)pl.textContent=d.players.online+'/'+d.players.max+' players';}
-    else{dot.className='status-dot offline';st.textContent='Offline';}
-  }).catch(function(){});
-</script>
+  <footer class="footer"></footer>
 <script>
 var DB={mrlucky3:{name:'MrLucky3',uuid:'069a79f4-44e9-4726-a5be-fca90e38aaf5',rank:'Owner',money:'$2,450,000',kills:2100,playtime:'1,204 hrs',votes:285,joined:'Jan 2025'},steve:{name:'Steve',uuid:'8667ba71-b85a-4004-af54-457a9734eed7',rank:'Member',money:'$1,200,000',kills:210,playtime:'892 hrs',votes:152,joined:'Feb 2025'},herobrine:{name:'Herobrine',uuid:'f498513c-e8c8-4173-9df6-4cc36905ec6e',rank:'VIP',money:'$654,200',kills:876,playtime:'310 hrs',votes:44,joined:'Mar 2025'},alex:{name:'Alex',uuid:'ec561538-f3fd-461d-aff5-086b22154bce',rank:'Member',money:'$432,100',kills:120,playtime:'401 hrs',votes:175,joined:'Apr 2025'}};
 var RC={Owner:'badge-red',Admin:'badge-purple',Moderator:'badge-green',VIP:'badge-amber',Member:'badge-gray'};
@@ -122,26 +58,6 @@ function search(){
   document.getElementById('pStats').innerHTML=[['&#128176;',p.money,'Balance'],['&#9876;&#65039;',p.kills,'Kills'],['&#9201;',p.playtime,'Playtime'],['&#128379;',p.votes,'Votes'],['&#128197;',p.joined,'Joined']].map(function(x){return '<div class="player-stat"><div class="player-stat-val">'+x[0]+' '+x[1]+'</div><div class="player-stat-label">'+x[2]+'</div></div>';}).join('');
   r.classList.add('visible');
 }
-</script>
-  <script>
-(function updateDynamicNav() {
-    const user = JSON.parse(localStorage.getItem('luckyUser'));
-    const navBtn = document.getElementById('navActionBtn');
-
-    if (user && user.username) {
-        // If logged in: Show username and link to account page
-        navBtn.innerText = `👤 ${user.username}`;
-        navBtn.href = "account.html";
-        
-        // Optional: If you want it to look slightly different when it's a profile link
-        navBtn.style.background = "rgba(255,255,255,0.1)";
-        navBtn.style.border = "1px solid var(--red)";
-    } else {
-        // If NOT logged in: Show Login and link to login page
-        navBtn.innerText = "🔑 Login";
-        navBtn.href = "login.html";
-    }
-})();
 </script>
 </body>
 </html>
