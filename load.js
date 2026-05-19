@@ -73,9 +73,11 @@ function initServerStatus() {
       var dot = document.getElementById('fDot'), st = document.getElementById('fSt'), pl = document.getElementById('fPl');
       if (!dot) return;
       if (d.online) {
-        dot.className = 'status-dot online';
+        dot.className = 'status-dot offline'; // Remove these lines when we get real server
+        st.textContent = 'Offline'; // This one too
+        /* dot.className = 'status-dot online'; uncomment these as well
         st.textContent = 'Online';
-        if (pl && d.players) pl.textContent = d.players.online + '/' + d.players.max + ' players';
+        if (pl && d.players) pl.textContent = d.players.online + '/' + d.players.max + ' players'; */
       } else {
         dot.className = 'status-dot offline';
         st.textContent = 'Offline';
