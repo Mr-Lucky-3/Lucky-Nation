@@ -41,6 +41,18 @@ function initNavHighlight() {
 function updateDynamicNav() {
   const user = JSON.parse(localStorage.getItem('luckyUser'));
   const navBtn = document.getElementById('navActionBtn');
+  const adminLi = document.getElementById('admin'); // Grab the admin element
+
+  // 1. Handle the Admin Link visibility safely
+  if (adminLi) {
+    if (user && (user.role === "owner" || user.role === "moderator")) {
+      adminLi.style.display = "block";
+    } else {
+      adminLi.style.display = "none";
+    }
+  }
+
+  // 2. Handle the Join/Login Button (Your existing code)
   if (!navBtn) return;
 
   if (user && user.username) {

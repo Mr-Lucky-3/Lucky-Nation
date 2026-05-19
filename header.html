@@ -19,10 +19,3 @@
     <span></span><span></span><span></span>
   </button>
 </div>
-<script>
-  let currentUser = JSON.parse(localStorage.getItem('luckyUser')) || null;
-  let admin = document.getElementById("admin");
-  if (currentUser.role == "owner" || currentUser.role == "moderator") {
-    admin.style = "display:block"
-  }
-</script>
