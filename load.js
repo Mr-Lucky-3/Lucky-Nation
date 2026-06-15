@@ -83,5 +83,5 @@ function initServerStatus() {
         st.textContent = 'Offline';
       }
     }).catch(() => {});
-  document.getElementById("copyright-year").textContent = new Date().getFullYear();
+  document.getElementById("year").textContent = new Date().getFullYear();
 }
