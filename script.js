@@ -57,8 +57,6 @@ function initAnimations() {
   cards.forEach(card => observer.observe(card));
 }
 
-// ── Footer year ──
-document.getElementById('year').textContent = new Date().getFullYear();
 
 // ── Init ──
 loadServerStatus();
